@@ -9,14 +9,14 @@ from datetime import datetime
 # Application Imports
 from peri2organise import db
 
-# Student Model
-class Student(db.Model):
+# User Model
+class User(db.Model):
     """
-    Database model for students.
+    Database model for users.
     """
-    __tablename__ = 'student'
+    __tablename__ = 'user'
 
-    student_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
     email_address = db.Column(db.String(30), nullable=False, unique=True)
@@ -24,22 +24,52 @@ class Student(db.Model):
     last_login_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
     is_account_active = db.Column(db.Boolean, nullable=False, default=True)
     password = db.Column(db.String(60), nullable=False)
-    tutor_group = db.Column(db.String(6), nullable=False)
-    musical_instrument_type = db.Column(db.String(10), nullable=False)
-    musical_instrument = db.Column(db.String(20), nullable=False)
-    musical_style = db.Column(db.String(9), nullable=False)
-    musical_grade = db.Column(db.Integer, nullable=False)
-    lesson_type = db.Column(db.String(10), nullable=False)
+    role = db.Column(db.String(3),nullable=False)
+    
+    # Specific to Students
+    tutor_group = db.Column(db.String(6))
+    musical_instrument_type = db.Column(db.String(10))
+    musical_instrument = db.Column(db.String(20))
+    musical_style = db.Column(db.String(9))
+    musical_grade = db.Column(db.Integer)
+    lesson_type = db.Column(db.String(10))
     lesson_pairing = db.Column(db.String(40))
 
     parent_id = db.Column(db.Integer, db.ForeignKey('parent.parent_id'))
 
-    lessons = relationship('Lesson', secondary='student_lesson_association')
-    instruments = relationship('Instrument', backref='Student')
+    # Specific to Tutors/Staff
+    telephone_number = db.Column(db.String(11))
+    speciality = db.Column(db.String(10))
 
-    def update_student_details(self, **kwargs):
+    
+    # Relationships
+    lessons = relationship('Lesson', secondary='user_lesson_association')
+    instruments = relationship('Instrument', backref='user')
+
+    def __repr__(self):
+        return '<User %s>' %(self.get_full_name())
+    
+    def is_active(self):
         """
-        Updates the Student's details.
+        Used by flask login to determine whether the account is active.
+        """
+        return bool(self.is_account_active)
+
+    def is_authenticated(self):
+        """
+        Return True as the User is authenticated.
+        """
+        return self.authenticated
+
+    def is_anonymous(self):
+        """
+        False, as anonymous users aren't supported.
+        """
+        return False
+
+    def update_user_details(self, **kwargs):
+        """
+        Updates the User's details.
         """
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
@@ -52,13 +82,13 @@ class Student(db.Model):
 
     def activate_account(self):
         """
-        Activates a Student's account.
+        Activates the User's account.
         """
         self.is_account_active = True
 
     def deactivate_account(self):
         """
-        Deactivates a Student's account.
+        Deactivates the User's account.
         """
         self.is_account_active = False
 
@@ -70,45 +100,51 @@ class Student(db.Model):
 
     def get_first_name(self):
         """
-        Returns the Student's first name, formatted as a title.
+        Returns the User's first name, formatted as a title.
         """
         return self.first_name.title()
 
     def get_last_name(self):
         """
-        Returns the Student's first name, formatted as a title.
+        Returns the User's first name, formatted as a title.
         """
         return self.last_name.title()
 
     def get_full_name(self):
         """
-        Returns the Student's full name, formatted as a title.
+        Returns the User's full name, formatted as a title.
         """
         return (self.first_name+" "+self.last_name).title()
 
     def get_email_address(self):
         """
-        Returns the Student's email address.
+        Returns the User's email address.
         """
         return self.email_address
 
     def get_join_date(self, time_format = '%d %b %G %H:%M'):
         """
-        Returns the Student's join date in the given format.
+        Returns the User's join date in the given format.
         """
         return self.join_date.strftime(time_format)
 
     def get_last_login_date(self, time_format = '%d %b %G %H:%M'):
         """
-        Returns the Student's last login date in the given format.
+        Returns the User's last login date in the given format.
         """
         return self.last_login_date.strftime(time_format)
 
     def get_tutor_group(self):
         """
-        Returns the Student's tutor group in a uppercase format.
+        Returns the User's tutor group in a uppercase format.
         """
         return self.tutor_group.upper()
+
+    def get_speciality(self):
+        """
+        Returns the User's specialty.
+        """
+        return self.speciality.title()
 
 # Parent Model
 class Parent(db.Model):
@@ -123,7 +159,10 @@ class Parent(db.Model):
     email_address = db.Column(db.String(30), nullable=False, unique=True)
     telephone_number = db.Column(db.String(11), nullable=False)
 
-    students = relationship('Student', backref='parent')
+    users = relationship('User', backref='parent')
+
+    def __repr__(self):
+        return '<Parent %s>' %(self.get_full_name())
 
     def update_parent_details(self, **kwargs):
         """
@@ -162,100 +201,6 @@ class Parent(db.Model):
         """
         return self.telephone_number
 
-# Tutor Model
-class Tutor(db.Model):
-    """
-    Database model for tutors (staff and peripatetic tutors).
-    """
-    __tablename__ = 'tutor'
-
-    tutor_id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(20), nullable=False)
-    telephone_number = db.Column(db.String(11), nullable=False)
-    email_address = db.Column(db.String(30), nullable=False, unique=True)
-    join_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
-    last_login_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
-    is_account_active = db.Column(db.Boolean, nullable=False, default=True)
-    password = db.Column(db.String(60), nullable=False)
-    speciality = db.Column(db.String(10), nullable=False)
-    staff_role = db.Column(db.String(5), nullable=False)
-
-    lessons = relationship('Lesson', secondary='lesson_tutor_association')
-
-    def update_tutor_details(self, **kwargs):
-        """
-        Updates the Tutor's details.
-        """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
-
-    def update_last_login(self):
-        """
-        Updates the last login date.
-        """
-        self.last_login_date = datetime.now()
-
-    def activate_account(self):
-        """
-        Activates a Tutor's account.
-        """
-        self.is_account_active = True
-
-    def deactivate_account(self):
-        """
-        Deactivates a Tutor's account.
-        """
-        self.is_account_active = False
-
-    def check_password_hash(self, password):
-        """
-        Compare a given password with the hash stored.
-        """
-        pass # TODO
-
-    def get_first_name(self):
-        """
-        Returns the Tutor's first name, formatted as a title.
-        """
-        return self.first_name.title()
-
-    def get_last_name(self):
-        """
-        Returns the Tutor's first name, formatted as a title.
-        """
-        return self.last_name.title()
-
-    def get_full_name(self):
-        """
-        Returns the Tutor's full name, formatted as a title.
-        """
-        return (self.first_name+" "+self.last_name).title()
-
-    def get_email_address(self):
-        """
-        Returns the Tutor's email address.
-        """
-        return self.email_address
-
-    def get_join_date(self, time_format = '%d %b %G %H:%M'):
-        """
-        Returns the Tutor's join date in the given format.
-        """
-        return self.join_date.strftime(time_format)
-
-    def get_last_login_date(self, time_format = '%d %b %G %H:%M'):
-        """
-        Returns the Tutor's last login date in the given format.
-        """
-        return self.last_login_date.strftime(time_format)
-
-    def get_speciality(self):
-        """
-        Returns the Tutor's specialty.
-        """
-        return self.speciality.title()
-
 # Lesson Model
 class Lesson(db.Model):
     """
@@ -271,9 +216,10 @@ class Lesson(db.Model):
 
     room_id = db.Column(db.Integer, db.ForeignKey('room.room_id'))
 
-    students = relationship('Student', secondary='student_lesson_association')
-    tutors = relationship('Tutor', secondary='lesson_tutor_association')
+    users = relationship('User', secondary='user_lesson_association')
 
+    def __repr__(self):
+        return '<Lesson %s>' %(self.get_lesson_date())
 
     def update_lesson_details(self, **kwargs):
         """
@@ -286,7 +232,7 @@ class Lesson(db.Model):
         """
         Returns the Lesson's date in the given format.
         """
-        return self.last_login_date.strftime(time_format)
+        return self.lesson_datetime.strftime(time_format)
 
     def get_lesson_duration(self):
         """
@@ -314,6 +260,9 @@ class Room(db.Model):
     facilities = db.Column(db.Text)
 
     lessons = relationship('Lesson', backref='room')
+
+    def __repr__(self):
+        return '<Room %s>' %(self.get_location())
 
     def update_room_details(self, **kwargs):
         """
@@ -347,7 +296,10 @@ class Instrument(db.Model):
     instrument_name = db.Column(db.String(30), nullable=False)
     description = db.Column(db.Text)
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+
+    def __repr__(self):
+        return '<Instrument %s>' %(self.get_instrument_name())
 
     def update_instrument_details(self, **kwargs):
         """
@@ -368,32 +320,21 @@ class Instrument(db.Model):
         """
         return self.description
 
-# Student Lesson Association Model
-class StudentLessonAssociation(db.Model):
+# User Lesson Association Model
+class UserLessonAssociation(db.Model):
     """
-    Association table between Student and Lesson.
+    Association table between User and Lesson.
     """
 
-    __tablename__ = 'student_lesson_association'
+    __tablename__ = 'user_lesson_association'
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.lesson_id'), primary_key=True)
     attendance_code = db.Column(db.String(1))
     attendance_notes = db.Column(db.Text)
 
-    student = relationship(Student, backref=backref('lesson_association'))
-    lesson = relationship(Lesson, backref=backref('student_association'))
+    user = relationship(User, backref=backref('lesson_association'))
+    lesson = relationship(Lesson, backref=backref('user_association'))
 
-# Lesson Tutor Association Model
-class LessonTutorAssociation(db.Model):
-    """
-    Association table between Lesson and Tutor
-    """
-
-    __tablename__ = 'lesson_tutor_association'
-
-    tutor_id = db.Column(db.Integer, db.ForeignKey('tutor.tutor_id'), primary_key=True)
-    lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.lesson_id'), primary_key=True)
-
-    tutor = relationship(Tutor, backref=backref('lesson_association'))
-    lesson = relationship(Lesson, backref=backref('tutor_association'))
+    def __repr__(self):
+        return '<UserLessonAssociation (%s) and (%s)>' %(self.user.__repr__(), self.lesson.__repr__())

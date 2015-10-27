@@ -10,7 +10,7 @@ from flask.ext.migrate import MigrateCommand
 # Application Imports
 from peri2organise import app
 from peri2organise import db
-from peri2organise.models import Student, Parent, Tutor, Lesson, Room, Instrument, StudentLessonAssociation, LessonTutorAssociation
+from peri2organise.models import User, Parent, Lesson, Room, Instrument, UserLessonAssociation
 
 # Create a Manager object.
 manager = Manager(app)
