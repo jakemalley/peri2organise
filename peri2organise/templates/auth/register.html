@@ -1,0 +1,18 @@
+{% extends '__layout__.html' %}
+{% block title %}Student Registration{% endblock %}
+{% block navbar %}
+    {% include 'home/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('home.index')}}">Home</a></li>
+    <li class="active">Register</li>
+{% endblock %}
+{% block pills %}
+    {% include 'home/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Register <small>please complete the form below to register for peripatetic lessons.</small></h1>
+    </div>
+    {% include 'auth/register_form.html' %}
+{% endblock %}
