@@ -32,7 +32,7 @@ def only_has_digits(form,field):
     """
     Validator to ensure a text field only contains digits.
     """
-    if not field.isdigits():
+    if not field.data.isdigit():
         # Error message.
         field.errors.append('Field must only contain digits.')
         # Raise stop validation.
@@ -45,7 +45,7 @@ class LoginForm(Form):
     """
 
     # Text field for the users email address.
-    email = TextField('email',validators=[DataRequired(),Email(),Length(max=30)])
+    email_address = TextField('email',validators=[DataRequired(),Email(),Length(max=60)])
     
     # Password field for the users password.
     password = PasswordField('password',validators=[DataRequired(),Length(min=4,max=32)])
@@ -66,7 +66,7 @@ class RegistrationForm(Form):
     # Text field for the student's last name.
     student_last_name = TextField('student last name',validators=[DataRequired(),Length(max=20)])
     # Text field for the student's email address.
-    student_email_address = TextField('student email address',validators=[DataRequired(), Email(), Length(max=30)])
+    student_email_address = TextField('student email address',validators=[DataRequired(), Email(), Length(max=60),is_on_email_domain])
     # Password field for the student's password.
     password = PasswordField('password',validators=[DataRequired(),Length(min=4,max=32)])
     # Password confirm field for the student's password.
@@ -78,7 +78,7 @@ class RegistrationForm(Form):
         choices=[('instrument','Instrument'),('singing','Singing')]
     )
     # Text field for the musical instrument.
-    musical_instrument = TextField('musical instrument', validators=[DataRequired(), Length(max=20)])
+    musical_instrument = TextField('musical instrument', validators=[Length(max=20)])
     # Select field for the musical style.
     musical_style = SelectField('musical style', 
         choices=[('jazz','Jazz'),('pop','Pop'),('classic','Classic')]
@@ -92,7 +92,7 @@ class RegistrationForm(Form):
         choices=[('individual','Individual'),('paired','Paired')]
     )
     # Text field for lesson pairing.
-    lesson_pairing = TextField('lesson_pairing', validators=[DataRequired(),Length(max=40)])
+    lesson_pairing = TextField('lesson_pairing', validators=[Length(max=40)])
     # Student signature.
     student_signature = BooleanField('student signature', validators=[DataRequired('You must check this box to say that you agree to the terms and conditions.')])
 
@@ -102,10 +102,7 @@ class RegistrationForm(Form):
     # Text field for the parent's last name.
     parent_last_name = TextField('parent last name',validators=[DataRequired(),Length(max=20)])
     # Text field for the parent's email address.
-    parent_email_address = TextField('parent email address',validators=[DataRequired(), Email(), Length(max=30)])
+    parent_email_address = TextField('parent email address',validators=[DataRequired(), Email(), Length(max=60)])
     # Text field for the parent's telephone number.
     parent_telephone_number = TextField('parent telephone number', validators=[DataRequired(),Length(max=11),only_has_digits])
     parent_signature = BooleanField('parent signature', validators=[DataRequired('You must check this box to say that you agree to the terms and conditions.')])
-
-
-

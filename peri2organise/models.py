@@ -68,6 +68,12 @@ class User(db.Model):
         """
         return False
 
+    def get_id(self):
+        """
+        Returns the User's id.
+        """
+        return self.user_id
+
     def update_user_details(self, **kwargs):
         """
         Updates the User's details.

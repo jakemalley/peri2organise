@@ -28,12 +28,14 @@ login_manager.login_view='auth.login'
 login_manager.refresh_view='auth.login'
 login_manager.needs_refresh_message = (u"To protect your account, please re authenticate to access this page.")
 
+# Import the user model, for the user loader.
+from peri2organise.models import User
 @login_manager.user_loader
 def load_user(user_id):
     """
     Load User object with user_id equal to the given user_id.
     """
-    return User.query.filter(User.user_id==user_ud).first()
+    return User.query.filter(User.user_id==user_id).first()
 
 # Import Blueprints
 from peri2organise.home.views import home_blueprint

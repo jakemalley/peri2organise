@@ -10,10 +10,10 @@
     {% endif %}
 
     <div class="form-group">
-        <label for="input_email" class="col-sm-2 control-label">Email</label>
+        <label for="input_email_address" class="col-sm-2 control-label">Email</label>
         <div class="col-sm-10">
-            {{ login_form.email(class="form-control",placeholder="Email",id="input_email") }}
-            {% for error in login_form.email.errors %}
+            {{ login_form.email_address(class="form-control",placeholder="Email",id="input_email_address") }}
+            {% for error in login_form.email_address.errors %}
             <p>
                 <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
                 {{ error }}
