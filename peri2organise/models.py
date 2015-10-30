@@ -47,6 +47,9 @@ class User(db.Model):
     lessons = relationship('Lesson', secondary='user_lesson_association')
     instruments = relationship('Instrument', backref='user')
 
+    # Is authenticated variable used by flask-login.
+    is_authenticated = True
+
     def __repr__(self):
         return '<User %s>' %(self.get_full_name())
     
@@ -55,12 +58,6 @@ class User(db.Model):
         Used by flask login to determine whether the account is active.
         """
         return bool(self.is_account_active)
-
-    def is_authenticated(self):
-        """
-        Return True as the User is authenticated.
-        """
-        return self.authenticated
 
     def is_anonymous(self):
         """
@@ -73,6 +70,12 @@ class User(db.Model):
         Returns the User's id.
         """
         return self.user_id
+
+    def get_role(self):
+        """
+        Returns the User's role.
+        """
+        return self.role.upper()
 
     def update_user_details(self, **kwargs):
         """

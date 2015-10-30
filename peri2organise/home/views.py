@@ -3,7 +3,8 @@
 # Views for the home blueprint.
 
 # Flask Imports
-from flask import Blueprint, render_template
+from flask import Blueprint
+from flask import render_template
 # Application Imports
 from peri2organise.auth.forms import LoginForm
 

@@ -3,12 +3,22 @@
 # Views for the authentication blueprint.
 
 # Flask Imports
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask.ext.login import login_user, logout_user, login_required
+from flask import Blueprint
+from flask import render_template
+from flask import request
+from flask import flash
+from flask import redirect
+from flask import url_for
+from flask.ext.login import login_user
+from flask.ext.login import logout_user
+from flask.ext.login import current_user
 # Application Imports
 from peri2organise import db
-from peri2organise.auth.forms import LoginForm, RegistrationForm
-from peri2organise.models import User, Parent
+from peri2organise.auth.forms import LoginForm
+from peri2organise.auth.forms import  RegistrationForm
+from peri2organise.auth.utils import login_required
+from peri2organise.models import User
+from peri2organise.models import Parent
 
 # Create auth blueprint.
 auth_blueprint = Blueprint('auth', __name__)
@@ -21,6 +31,10 @@ def login():
 
     # Create a login form object.
     login_form = LoginForm()
+
+    # If the current user is logged in.
+    if current_user.is_authenticated:
+        return redirect(url_for('student.dashboard'))
 
     if request.method == 'POST' and login_form.validate_on_submit():
         # Form is valid.
@@ -40,8 +54,16 @@ def login():
                 if request.args.get('next') and not request.args.get('next') == "/logout":
                     return redirect(request.args.get('next'))
                 else:
-                    # Redirect them to the dashboard page.
-                    return redirect(url_for('home.index')) # TODO
+                    # Redirect them to their dashboard page.
+                    if user.get_role() == "STU":
+                        # Student
+                        return redirect(url_for('student.dashboard'))
+                    elif user.get_role() == "STA":
+                        # Staff
+                        return redirect(url_for('staff.dashboard'))
+                    elif user.get_role() == "TUT":
+                        # Tutor
+                        return redirect(url_for('tutor.dashboard'))
             else:
                 # User could not be logged in, check the account is active.
                 if user.is_active():
@@ -112,7 +134,7 @@ def register():
     return render_template('auth/register.html', error=error, registration_form=registration_form,login_form=login_form)
 
 @auth_blueprint.route('/logout')
-@login_required
+@login_required()
 def logout():
     """
     Logout the currently logged in user.

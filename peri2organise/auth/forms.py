@@ -4,8 +4,16 @@
 
 # Flask Imports
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField, DecimalField, BooleanField
-from wtforms.validators import StopValidation, DataRequired, Email, Length, EqualTo
+from wtforms import TextField
+from wtforms import PasswordField
+from wtforms import SelectField
+from wtforms import DecimalField
+from wtforms import BooleanField
+from wtforms.validators import StopValidation
+from wtforms.validators import DataRequired
+from wtforms.validators import Email
+from wtforms.validators import Length
+from wtforms.validators import EqualTo
 # Application Imports
 from peri2organise import app
 

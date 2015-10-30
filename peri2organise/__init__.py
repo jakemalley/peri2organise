@@ -40,7 +40,13 @@ def load_user(user_id):
 # Import Blueprints
 from peri2organise.home.views import home_blueprint
 from peri2organise.auth.views import auth_blueprint
+from peri2organise.student.views import student_blueprint
+from peri2organise.staff.views import staff_blueprint
+from peri2organise.tutor.views import tutor_blueprint
 
 # Register Blueprints
 app.register_blueprint(home_blueprint)
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
+app.register_blueprint(student_blueprint, url_prefix='/student')
+app.register_blueprint(staff_blueprint, url_prefix='/staff')
+app.register_blueprint(tutor_blueprint, url_prefix='/tutor')

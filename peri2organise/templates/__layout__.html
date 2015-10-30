@@ -30,7 +30,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">{% if config['BRAND'] %}{{config['BRAND']}}{% else %}Peri2Organise{% endif %}</a>
+                <a class="navbar-brand" href="{{url_for('home.index')}}">{% if config['BRAND'] %}{{config['BRAND']}}{% else %}Peri2Organise{% endif %}</a>
             </div>
 
             <!-- Navbar Links + Dropdown -->
