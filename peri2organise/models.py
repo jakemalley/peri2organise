@@ -8,6 +8,7 @@ from sqlalchemy.orm import backref
 from datetime import datetime
 # Application Imports
 from peri2organise import db
+from peri2organise import bcrypt
 
 # User Model
 class User(db.Model):
@@ -19,7 +20,7 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
-    email_address = db.Column(db.String(30), nullable=False, unique=True)
+    email_address = db.Column(db.String(60), nullable=False, unique=True)
     join_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
     last_login_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
     is_account_active = db.Column(db.Boolean, nullable=False, default=True)
@@ -96,7 +97,13 @@ class User(db.Model):
         """
         Compare a given password with the hash stored.
         """
-        pass # TODO
+        return bcrypt.check_password_hash(self.password,password)
+
+    def create_password_hash(self,password):
+        """
+        Create a password hash and return it to the user.
+        """
+        return bcrypt.generate_password_hash(password)
 
     def get_first_name(self):
         """
@@ -156,7 +163,7 @@ class Parent(db.Model):
     parent_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
-    email_address = db.Column(db.String(30), nullable=False, unique=True)
+    email_address = db.Column(db.String(60), nullable=False, unique=True)
     telephone_number = db.Column(db.String(11), nullable=False)
 
     users = relationship('User', backref='parent')
