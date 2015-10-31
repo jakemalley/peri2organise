@@ -5,8 +5,11 @@
 # Flask Imports
 from flask import Blueprint
 from flask import render_template
+from flask import redirect
+from flask.ext.login import current_user
 # Application Imports
 from peri2organise.auth.forms import LoginForm
+from peri2organise.auth.utils import get_current_user_dashboard
 
 home_blueprint = Blueprint('home',__name__)
 
@@ -15,6 +18,11 @@ def index():
     """
     Home Page.
     """
+
+    # Check the user is not already authenticated.
+    if current_user.is_authenticated:
+        return redirect(get_current_user_dashboard())
+
     # Create a login form object (for the nav bar form).
     login_form = LoginForm()
 

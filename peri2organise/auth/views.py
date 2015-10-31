@@ -17,6 +17,7 @@ from peri2organise import db
 from peri2organise.auth.forms import LoginForm
 from peri2organise.auth.forms import  RegistrationForm
 from peri2organise.auth.utils import login_required
+from peri2organise.auth.utils import get_current_user_dashboard
 from peri2organise.models import User
 from peri2organise.models import Parent
 
@@ -34,7 +35,7 @@ def login():
 
     # If the current user is logged in.
     if current_user.is_authenticated:
-        return redirect(url_for('student.dashboard'))
+        return redirect(get_current_user_dashboard())
 
     if request.method == 'POST' and login_form.validate_on_submit():
         # Form is valid.
@@ -54,16 +55,7 @@ def login():
                 if request.args.get('next') and not request.args.get('next') == "/logout":
                     return redirect(request.args.get('next'))
                 else:
-                    # Redirect them to their dashboard page.
-                    if user.get_role() == "STU":
-                        # Student
-                        return redirect(url_for('student.dashboard'))
-                    elif user.get_role() == "STA":
-                        # Staff
-                        return redirect(url_for('staff.dashboard'))
-                    elif user.get_role() == "TUT":
-                        # Tutor
-                        return redirect(url_for('tutor.dashboard'))
+                    return redirect(get_current_user_dashboard())
             else:
                 # User could not be logged in, check the account is active.
                 if user.is_active():
