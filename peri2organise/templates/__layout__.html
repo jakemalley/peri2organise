@@ -20,7 +20,11 @@
   </head>
   <body>
     <!-- Header -->
+    {% if current_user.is_authenticated and (current_user.get_role()=='STA' or current_user.get_role()=='TUT') %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+    {% else %}
     <nav class="navbar navbar-default navbar-fixed-top">
+    {% endif %}
         <div class="container-fluid">
             <!-- Navbar Brand (Logo) -->
             <div class="navbar-header">
@@ -60,7 +64,11 @@
     </div>
 
     <!-- Footer -->
+    {% if current_user.is_authenticated and (current_user.get_role()=='STA' or current_user.get_role()=='TUT') %}
+    <nav class="navbar navbar-inverse navbar-fixed-bottom">
+    {% else %}
     <nav class="navbar navbar-default navbar-fixed-bottom">
+    {% endif %}
         <div class="container-fluid">
             <p class="navbar-text">Copyright &copy; {% if config['BRAND'] %}{{config['BRAND']}}{% else %}Peri2Organise{% endif %} 2015</p>
             <div class="pull-right">
