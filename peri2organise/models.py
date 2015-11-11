@@ -160,7 +160,10 @@ class User(db.Model):
         """
         Returns the User's specialty.
         """
-        return self.speciality.title()
+        if self.speciality:
+            return self.speciality.title()
+        else:
+            return 'Unknown'
 
 # Parent Model
 class Parent(db.Model):

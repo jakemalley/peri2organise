@@ -1,0 +1,32 @@
+{% extends '__layout__.html' %}
+{% block title %}View Staff Member{% endblock %}
+{% block navbar %}
+    {% include 'student/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('student.dashboard')}}">Student Dashboard</a></li>
+    <li><a href="{{url_for('student.staff')}}">Staff Members</a></li>
+    <li>View Staff Member</li>
+{% endblock %}
+{% block pills %}
+    {% include 'student/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Student <small>view staff member</small></h1>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>Staff ID</th>
+            <td>{{staff_member.user_id}}</td>
+        </tr>
+        <tr>
+            <th>Staff Name</th>
+            <td>{{staff_member.get_full_name()}}</td>
+        </tr>
+        <tr>
+            <th>Staff Speciality</th>
+            <td>{{staff_member.get_speciality()}}</td>
+        </tr>
+    </table>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends '__layout__.html' %}
+{% block title %}Lessons{% endblock %}
+{% block navbar %}
+    {% include 'student/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('student.dashboard')}}">Student Dashboard</a></li>
+    <li>Lessons</li>
+{% endblock %}
+{% block pills %}
+    {% include 'student/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Student <small>lessons</small></h1>
+    </div>
+    <!-- User's upcoming lessons. -->
+    <p>Upcoming Lessons:</p>
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Lesson Duration</th>
+            <th>Tutor</th>
+            <th>Lesson Notes</th>
+            <th>Room</th>
+        </tr>
+        {% for lesson in upcoming_lessons %}
+        <tr>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
+                    {{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{lesson.get_lesson_duration()}} mins</td>
+            <td>
+                {% for user in lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    }
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{lesson.get_lesson_notes()}}</td>
+            <td>{{lesson.room.get_location()}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- User's previous lessons. -->
+    <p>Previous Lessons:</p>
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Lesson Duration</th>
+            <th>Tutor</th>
+            <th>Lesson Notes</th>
+            <th>Room</th>
+        </tr>
+        {% for lesson in previous_lessons %}
+        <tr>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
+                    {{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{lesson.get_lesson_duration()}} mins</td>
+            <td>
+                {% for user in lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{lesson.get_lesson_notes()}}</td>
+            <td>{{lesson.room.get_location()}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

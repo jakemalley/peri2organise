@@ -1,0 +1,35 @@
+{% extends '__layout__.html' %}
+{% block title %}Tutors{% endblock %}
+{% block navbar %}
+    {% include 'student/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('student.dashboard')}}">Student Dashboard</a></li>
+    <li>Peripatetic Tutors</li>
+{% endblock %}
+{% block pills %}
+    {% include 'student/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Student <small>peripatetic tutors</small></h1>
+    </div>
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Speciality</th>
+            <th>Contact Tutor</th>
+        </tr>
+        {% for tutor in tutors %}
+        <tr>
+            <td><a href="{{url_for('student.view_tutor',tutor_id=tutor.user_id)}}">
+                    {{tutor.user_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{tutor.get_full_name()}}</td>
+            <td>{{tutor.get_speciality()}}</td>
+            <td>Contact Tutor</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends '__layout__.html' %}
+{% block title %}Attendance{% endblock %}
+{% block navbar %}
+    {% include 'student/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('student.dashboard')}}">Student Dashboard</a></li>
+    <li>Attendance</li>
+{% endblock %}
+{% block pills %}
+    {% include 'student/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Student <small>lesson attendance</small></h1>
+    </div>
+    <h4>Attendance Statistics</h4>
+    <table class="table table-hover">
+        <tr>
+            <th>Percentage of lesson attended.</th>
+            <th>Percentage of lesson absent.</th>
+            <th>Percentage of lesson late.</th>
+        </tr>
+        <tr>
+            {% for figure in attendance_statistics %}
+                <td>{{'%.2f' %figure}}%</td>
+            {% endfor %}
+        </tr>
+    </table>
+    <h4>Lessons</h4>
+    <!-- Attended lessons. -->
+    Attended Lessons:
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Tutor</th>
+            <th>Attendance</th>
+            <th>Attendance Notes</th>
+        </tr>
+        {% for assoc in lessons_attended_assoc %}
+        <tr>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">
+                    {{assoc.lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>
+                {% for user in assoc.lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            <td>{{assoc.attendance_notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- Late lessons. -->
+    Late Lessons:
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Tutor</th>
+            <th>Attendance</th>
+            <th>Attendance Notes</th>
+        </tr>
+        {% for assoc in lessons_late_assoc %}
+        <tr>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">
+                    {{assoc.lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>
+                {% for user in assoc.lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            <td>{{assoc.attendance_notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- Absent lessons. -->
+    Absent Lessons:
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Tutor</th>
+            <th>Attendance</th>
+            <th>Attendance Notes</th>
+        </tr>
+        {% for assoc in lessons_absent_assoc %}
+        <tr>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">
+                    {{assoc.lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>
+                {% for user in assoc.lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code == 'N' %}Absent, No Reason Provided.{%else%}Not Recorded{% endif %}</td>
+            <td>{{assoc.attendance_notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
