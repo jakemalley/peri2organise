@@ -55,13 +55,13 @@
             <th>Attendance Notes</th>
             <th>Attendance</th>
         </tr>
-        {% for lesson,attendance_code,attendance_notes in attended_lessons %}
+        {% for assoc in attended_lessons_assoc %}
         <tr>
-            <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">{{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td> 
-            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
-            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
-            <td>{{attendance_notes}}
-            <td>{% if attendance_code == 'A' %}Present{% elif attendance_code == 'P' %}Planned Absence{% elif attendance_code == 'L' %}Late{% elif attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td> 
+            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{assoc.attendance_notes}}
+            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
         </tr>
         {% endfor %}
     </table>
@@ -75,13 +75,13 @@
             <th>Attendance Notes</th>
             <th>Attendance</th>
         </tr>
-        {% for lesson,attendance_code,attendance_notes in unknown_lessons %}
+        {% for assoc in unknown_lessons_assoc %}
         <tr>
-            <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">{{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td> 
-            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
-            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
-            <td>{{attendance_notes}}
-            <td>{% if attendance_code == 'A' %}Present{% elif attendance_code == 'P' %}Planned Absence{% elif attendance_code == 'L' %}Late{% elif attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td> 
+            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{assoc.attendance_notes}}
+            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
         </tr>
         {% endfor %}
     </table>

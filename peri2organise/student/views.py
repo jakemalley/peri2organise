@@ -11,6 +11,11 @@ from peri2organise.models import User
 from peri2organise.models import Lesson
 from peri2organise.models import UserLessonAssociation
 from peri2organise.auth.utils import login_required
+from peri2organise.student.utils import select_future_lessons
+from peri2organise.student.utils import select_past_lessons
+from peri2organise.student.utils import select_lessons_assoc
+from peri2organise.student.utils import select_user
+from peri2organise.student.utils import select_users_by_role
 # Imports
 from datetime import datetime
 
@@ -25,17 +30,14 @@ def dashboard():
     """
     # Get the current time.
     now = datetime.now()
-    # Select all the lessons, where the student is a current_user and the lessons
-    # are in the future.
-    my_lessons = Lesson.query.filter(Lesson.users.contains(current_user)).filter(Lesson.lesson_datetime>now).all()
-    # Select all lessons, and their attendance codes. (Where the attendance has been filled in.)
-    # and the lessons were in the past.
-    attended_lessons = [(assoc.lesson,assoc.attendance_code,assoc.attendance_notes) for assoc in UserLessonAssociation.query.filter(UserLessonAssociation.user==current_user).filter(UserLessonAssociation.attendance_code!=None).filter(Lesson.lesson_datetime<now).all()]
-    # Select all lessons, (Where the attendance has not been filled in.)
-    # and the lessons were in the past.
-    unknown_lessons = [(assoc.lesson,assoc.attendance_code,assoc.attendance_notes) for assoc in UserLessonAssociation.query.filter(UserLessonAssociation.user==current_user).filter(UserLessonAssociation.attendance_code==None).filter(Lesson.lesson_datetime<now).all()]
+    # Select the future lessons.
+    lessons = select_future_lessons(current_user)
+    # Select all the past lessons, that were attended. (Limit to 5)
+    attended_lessons_assoc = select_lessons_assoc(current_user, max_date=now,attendance_codes=('A','L'),limit=5) 
+    # Select all the past lessons, that have not been recorded.
+    unknown_lessons_assoc = select_lessons_assoc(current_user, max_date=now,attendance_code=None) 
     # Render the dashboard template, passing in the lessons selected from the database.
-    return render_template('student/dashboard.html',lessons=my_lessons,attended_lessons=attended_lessons,unknown_lessons=unknown_lessons)
+    return render_template('student/dashboard.html',lessons=lessons,attended_lessons_assoc=attended_lessons_assoc,unknown_lessons_assoc=unknown_lessons_assoc)
 
 @student_blueprint.route('/lessons')
 @login_required(role="STU")
@@ -47,10 +49,10 @@ def lessons():
     now = datetime.now()
     # Select all the lessons, where the student is the current user, and the lessons
     # are in the future.
-    upcoming_lessons = Lesson.query.filter(Lesson.users.contains(current_user)).filter(Lesson.lesson_datetime>now).all()
+    upcoming_lessons = select_future_lessons(current_user)
     # Select all previous lessons, where the student is the current user, and the lessons
     # are in the past.
-    previous_lessons = Lesson.query.filter(Lesson.users.contains(current_user)).filter(Lesson.lesson_datetime<now).all()
+    previous_lessons = select_past_lessons(current_user)
     # Render the template passing in the lessons selected from the database.
     return render_template('student/lessons.html',upcoming_lessons=upcoming_lessons,previous_lessons=previous_lessons)
 
@@ -61,7 +63,7 @@ def view_lesson(lesson_id):
     View a single Lesson.
     """
     # Get the UserLessonAssociation for the current and the given lesson id. (So we can also display attendance etc.)
-    assoc = UserLessonAssociation.query.filter(UserLessonAssociation.user==current_user).filter(UserLessonAssociation.lesson_id==lesson_id).first()
+    assoc = select_lessons_assoc(current_user,lesson_id=lesson_id)
     # Render the view lesson template and pass in the association and the lesson object.
     return render_template('student/view_lesson.html',lesson=assoc.lesson,assoc=assoc)
 
@@ -72,7 +74,7 @@ def tutors():
     All Tutors.
     """
     # Select all of the tutors from the database.
-    tutors = User.query.filter(User.role=='TUT').all()
+    tutors = select_users_by_role('TUT')
     # Render the tutors template, passing in the tutors.
     return render_template('student/tutors.html',tutors=tutors)
 
@@ -83,7 +85,7 @@ def view_tutor(tutor_id):
     View Tutor.
     """
     # Select the tutor with the given tutor_id.
-    tutor = User.query.filter(User.role=='TUT').filter(User.user_id==int(tutor_id)).first()
+    tutor = select_user(tutor_id,role='TUT')
     # Render the template passing in the tutor object.
     return render_template('student/view_tutor.html',tutor=tutor)
 
@@ -94,7 +96,7 @@ def staff():
     All Staff.
     """
     # Select all of the staff members.
-    staff = User.query.filter(User.role=='STA').all()
+    staff = select_users_by_role('STA')
     # Render the template passing in the staff members.
     return render_template('student/staff.html',staff=staff)
 
@@ -105,7 +107,7 @@ def view_staff(staff_id):
     View Staff Member.
     """
     # Select the staff member with the given staff_id.
-    staff_member = User.query.filter(User.role=='STA').filter(User.user_id==int(staff_id)).first()
+    staff_member = select_user(staff_id, role='STA')
     # Render the template passing in the staff member.
     return render_template('student/view_staff.html',staff_member=staff_member)
 
@@ -123,11 +125,11 @@ def attendance():
     assoc_base_query = UserLessonAssociation.query.filter(UserLessonAssociation.user==current_user).filter(Lesson.lesson_datetime>beginning_of_year)
 
     # All attended.
-    lessons_attended_assoc = assoc_base_query.filter(UserLessonAssociation.attendance_code=='A').all()
+    lessons_attended_assoc = select_lessons_assoc(current_user,min_date=beginning_of_year,attendance_code='A')
     # All absent.
-    lessons_absent_assoc = assoc_base_query.filter(UserLessonAssociation.attendance_code.in_(('P','N'))).all()
+    lessons_absent_assoc = select_lessons_assoc(current_user,min_date=beginning_of_year,attendance_codes=('P','N'))
     # All late.
-    lessons_late_assoc = assoc_base_query.filter(UserLessonAssociation.attendance_code=='L').all()
+    lessons_late_assoc = select_lessons_assoc(current_user,min_date=beginning_of_year,attendance_code='L')
     # Calculate percentages of attendance.
     # Total number of lessons.
     total_number_of_lessons = len(lessons_attended_assoc)+len(lessons_absent_assoc)+len(lessons_late_assoc)
