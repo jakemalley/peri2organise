@@ -8,6 +8,7 @@ from flask import render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.bcrypt import Bcrypt
+from flask.ext.mail import Mail
 # Application Imports
 from peri2organise.utils import load_application_configuration
 
@@ -20,6 +21,8 @@ load_application_configuration(app)
 db = SQLAlchemy(app)
 # Create bcrypt object, used for password hashing.
 bcrypt = Bcrypt(app)
+# Create mail object.
+mail = Mail(app)
 # Create login manager object.
 login_manager = LoginManager()
 login_manager.init_app(app)

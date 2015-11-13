@@ -13,6 +13,10 @@ from flask.ext.login import current_user
 # Application imports
 from peri2organise import app
 from peri2organise import login_manager
+# Imports
+from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import BadSignature
+from itsdangerous import BadData
 
 def get_current_user_dashboard():
     """
@@ -61,3 +65,62 @@ def login_required(role="ANY"):
             return func(*args,**kwargs)
         return decorated_view
     return wrapper
+
+def timed_safe_url_dump(data, salt='peri2organise'):
+    """
+    Serializes the data into a string, that is
+    able to be used in URLs. Used for creating password reset token/
+    authentication tokens.
+
+    Salt can be used when generating safe URL tokens for different purposed, 
+    e.g. salt='reset_password' or salt='auth_token'.
+    """
+
+    try:
+        secret_key = app.config['SECRET_KEY']
+    except KeyError:
+        raise Exception('A Secret Key is required to generate tokens.')
+    else:
+        # Ensure key is a string.
+        if secret_key is None or type(secret_key) is not str:
+            raise Exception('A Secret Key is required to generate tokens.')
+
+    # Create URL safe timed serializer.
+    serializer = URLSafeTimedSerializer(secret_key, salt=salt)
+    # Serialize the data.
+    return serializer.dumps(data)
+
+def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise'):
+    """
+    De-serializes the serialized data into the original data.
+
+    Salt can be used when generating safe URL tokens for different purposed, 
+    e.g. salt='reset_password' or salt='auth_token'. The salt must be the same 
+    as the salt used when the data was serialized.
+    """
+
+    try:
+        secret_key = app.config['SECRET_KEY']
+    except KeyError:
+        raise Exception('A Secret Key is required to generate tokens.')
+    else:
+        # Ensure key is a string.
+        if secret_key is None or type(secret_key) is not str:
+            raise Exception('A Secret Key is required to generate tokens.')
+
+    # Create URL safe timed serializer.
+    serializer = URLSafeTimedSerializer(secret_key, salt=salt)
+
+    try:
+        # Try and decode the data.
+        decoded_data = serializer.loads(serialized_data, max_age=max_age_in_seconds)
+    except BadSignature, e:
+        encoded_payload = e.payload
+        if encoded_payload is not None:
+            try:
+                decoded_payload = serializer.load_payload(encoded_payload)
+            except BadData:
+                return False
+        return False
+    else:
+        return decoded_data

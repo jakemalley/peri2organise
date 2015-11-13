@@ -114,3 +114,23 @@ class RegistrationForm(Form):
     # Text field for the parent's telephone number.
     parent_telephone_number = TextField('parent telephone number', validators=[DataRequired(),Length(max=11),only_has_digits])
     parent_signature = BooleanField('parent signature', validators=[DataRequired('You must check this box to say that you agree to the terms and conditions.')])
+
+class GetEmailAddressForm(Form):
+
+    """
+    Get email address form, used to for users to initiate a password reset.
+    """
+
+    # Text field for the users email address.
+    email_address = TextField('email',validators=[DataRequired(),Email(),Length(max=60)])
+
+class ResetPasswordForm(Form):
+
+    """
+    Reset password form, uses by users to reset their password.
+    """
+
+    # Password field for the user's password.
+    password = PasswordField('password',validators=[DataRequired(),Length(min=4,max=32)])
+    # Password confirm field for the user's password.
+    password_confirm = PasswordField('password confirm',validators=[EqualTo('password',message='Passwords must match.'),DataRequired(),Length(min=4,max=32)])

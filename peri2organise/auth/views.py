@@ -12,14 +12,22 @@ from flask import url_for
 from flask.ext.login import login_user
 from flask.ext.login import logout_user
 from flask.ext.login import current_user
+from flask.ext.mail import Message
 # Application Imports
+from peri2organise import app
 from peri2organise import db
+from peri2organise import mail
 from peri2organise.auth.forms import LoginForm
-from peri2organise.auth.forms import  RegistrationForm
+from peri2organise.auth.forms import RegistrationForm
+from peri2organise.auth.forms import GetEmailAddressForm
+from peri2organise.auth.forms import ResetPasswordForm
 from peri2organise.auth.utils import login_required
 from peri2organise.auth.utils import get_current_user_dashboard
+from peri2organise.auth.utils import timed_safe_url_dump
+from peri2organise.auth.utils import timed_safe_url_load
 from peri2organise.models import User
 from peri2organise.models import Parent
+
 
 # Create auth blueprint.
 auth_blueprint = Blueprint('auth', __name__)
@@ -137,3 +145,82 @@ def logout():
     flash("Successfully logged out.")
     # Redirect to the home page.
     return redirect(url_for('home.index'))
+
+@auth_blueprint.route('/forgotpassword', methods=['GET','POST'])
+def forgot_password():
+    
+    # Set empty error.
+    error = None
+
+    # Create a new form object.
+    get_email_address_form = GetEmailAddressForm()
+
+    if request.method == 'POST' and get_email_address_form.validate_on_submit():
+        # If the request was a post and the form was valid.
+        # Find the user by email.
+        user = User.query.filter(User.email_address==get_email_address_form.email_address.data).first()
+        # Ensure the user exists.
+        if user is not None:
+            # Create an array of data to serialize. 
+            data = [user.get_first_name(), user.get_email_address(), user.password]
+            # Create a timed safe url.
+            dump = timed_safe_url_dump(data,salt='password_reset_form')
+            # Create an email message.
+            message = Message('Password Reset', recipients=[user.get_email_address()])
+            message.html = render_template('email/forgotpassword.html',name=user.get_first_name(),link=url_for('auth.reset_password',_external=True,token=dump))
+            # Send the message.
+            mail.send(message)
+            # Flash a success message.
+            flash('Successfully sent reset email.')
+            # Redirect to the homepage.
+            return redirect(url_for('home.index'))
+        else:
+            error = 'Invalid E-Mail address.'
+            flash(error,'error')
+
+    return render_template('auth/forgotpassword.html',get_email_address_form=get_email_address_form,error=error)
+
+@auth_blueprint.route('/resetpassword',methods=['GET','POST'])
+def reset_password():
+
+    # Set an empty error.
+    error = None
+
+    # Create a reset password form object.
+    reset_password_form = ResetPasswordForm()
+
+    # Check the method is POST and the form is valid.
+    if request.method == 'POST' and reset_password_form.validate_on_submit():    
+
+        # Get the token.
+        token = request.args.get('token')
+        if not token:
+            # If the token wasn't given in the url, create this error message.
+            error = "Password reset token not provided, try copying and pasting the link from your password reset email. Or return to the homepage."
+        else:
+            # Decode the token.
+            data = timed_safe_url_load(token,app.config['MAX_PASSWORD_TOKEN_AGE'],salt='password_reset_form')
+            # If the decode function returned false.
+            if not data:
+                # Invalid token error.
+                error = "Invalid reset token, try copying and pasting the link from your password reset email. Or return to the homepage."
+            else:
+                # Proceed with the reset.
+                # Find the user.
+                user = User.query.filter(User.email_address==data[1]).first()
+                # Check the password hash matches.
+                if data[2] == user.password:
+                    # Reset the password, with the new password.
+                    new_password = user.create_password_hash(reset_password_form.password.data)
+                    # Update the user's details.
+                    user.update_user_details(password=new_password)
+                    # Commit the changes.
+                    db.session.commit()
+                    # Flash a success message.
+                    flash("Password successfully updated.")
+                    # Redirect the user to the login page.
+                    return redirect(url_for('auth.login'))
+                else:
+                    error = "Invalid reset token, try copying and pasting the link from your password reset email. Or return to the homepage."
+
+    return render_template('auth/resetpassword.html',error=error,reset_password_form=reset_password_form)
