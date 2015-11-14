@@ -124,3 +124,32 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
         return False
     else:
         return decoded_data
+
+def is_on_email_domain(form,field):
+    """
+    Validator to ensure student's use their school email.
+    """
+    EMAIL_DOMAIN = app.config['EMAIL_DOMAIN']
+    if field.data is not None:
+        try:
+            user,domain = field.data.split('@')
+            if domain != EMAIL_DOMAIN:
+                # Error message.
+                field.errors.append('Email domain must be '+EMAIL_DOMAIN+'.')
+                # Raise stop validation.
+                raise StopValidation()
+        except ValueError:
+            # Error message.
+            field.errors.append('Invalid email address.')
+            # Raise stop validation.
+            raise StopValidation()
+
+def only_has_digits(form,field):
+    """
+    Validator to ensure a text field only contains digits.
+    """
+    if not field.data.isdigit():
+        # Error message.
+        field.errors.append('Field must only contain digits.')
+        # Raise stop validation.
+        raise StopValidation()

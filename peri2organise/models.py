@@ -165,6 +165,12 @@ class User(db.Model):
         else:
             return 'Unknown'
 
+    def get_personal_details(self):
+        """
+        Returns a dictionary of all the user's details.
+        """
+        return self.__dict__
+
 # Parent Model
 class Parent(db.Model):
     """
