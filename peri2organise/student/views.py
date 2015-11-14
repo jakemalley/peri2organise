@@ -4,18 +4,28 @@
 
 # Flask Imports
 from flask import Blueprint
+from flask import flash
+from flask import redirect
 from flask import render_template
+from flask import request
+from flask import url_for
 from flask.ext.login import current_user
+from flask.ext.mail import Message
 # Application Imports
+from peri2organise import db
+from peri2organise import mail
 from peri2organise.models import User
 from peri2organise.models import Lesson
 from peri2organise.models import UserLessonAssociation
 from peri2organise.auth.utils import login_required
+from peri2organise.student.forms import UpdatePersonalDetailsForm
+from peri2organise.student.forms import ContactForm
 from peri2organise.student.utils import select_future_lessons
 from peri2organise.student.utils import select_past_lessons
 from peri2organise.student.utils import select_lessons_assoc
 from peri2organise.student.utils import select_user
 from peri2organise.student.utils import select_users_by_role
+from peri2organise.student.utils import select_users_by_roles
 # Imports
 from datetime import datetime
 
@@ -137,3 +147,67 @@ def attendance():
     attendance_statistics = [len(lessons_attended_assoc)*100/total_number_of_lessons,len(lessons_absent_assoc)*100/total_number_of_lessons,len(lessons_late_assoc)*100/total_number_of_lessons]
     # Render the template passing all of the data selected from the database.
     return render_template('student/attendance.html', lessons_attended_assoc=lessons_attended_assoc, lessons_late_assoc=lessons_late_assoc, lessons_absent_assoc=lessons_absent_assoc,attendance_statistics=attendance_statistics)
+
+@student_blueprint.route('/personaldetails', methods=['GET','POST'])
+@login_required(role='STU')
+def personal_details():
+
+    # Create the form object, for updating details.
+    update_personal_details_form = UpdatePersonalDetailsForm()
+
+    if request.method == 'POST' and update_personal_details_form.validate_on_submit():
+        # Form is valid.
+        # Ensure the update box is checked.
+        if update_personal_details_form.update_details.data:
+            # Update all the details.
+            current_user.update_user_details(first_name=update_personal_details_form.student_first_name.data,last_name=update_personal_details_form.student_last_name.data,email_address=update_personal_details_form.student_email_address.data,tutor_group=update_personal_details_form.student_tutor_group.data,musical_instrument_type=update_personal_details_form.musical_instrument_type.data,musical_instrument=update_personal_details_form.musical_instrument.data,musical_style=update_personal_details_form.musical_style.data,musical_grade=update_personal_details_form.musical_grade.data)
+            # Save the changes.
+            db.session.commit()
+            # Flash a success method.
+            flash('Successfully updated personal details.')
+            # Redirect to this page - some weird stuff was happening with get_personal_details
+            return redirect(url_for('student.personal_details'))
+
+    # Create a dictionary of the required personal details.
+    personal_details = current_user.get_personal_details()
+    # Change the defaults in the form - for select boxes only!
+    update_personal_details_form.musical_instrument_type.default=personal_details['musical_instrument_type']
+    update_personal_details_form.musical_style.default=personal_details['musical_style']
+    update_personal_details_form.musical_grade.default=personal_details['musical_grade']
+    # Update the form to reflect changes.
+    update_personal_details_form.process()
+
+    return render_template('student/personaldetails.html', update_personal_details_form=update_personal_details_form,personal_details=personal_details)
+
+@student_blueprint.route('/contact', methods=['GET','POST'])
+@login_required(role='STU')
+def contact():
+
+    # Create an empty error.
+    error = None
+
+    # Create a form object.
+    contact_form = ContactForm()
+
+    # Select all the staff and tutors.
+    contact_form.user.choices = [(user.user_id, user.get_full_name()) for user in select_users_by_roles(('TUT','STA'))]
+
+    if request.method == 'POST' and contact_form.validate_on_submit():
+        # Form is valid.
+        # Check the staff members is not the default
+        if contact_form.user.data == '0':
+            error = 'A staff member must be chosen.'
+        else:
+            # Find the user.
+            user = User.query.filter(User.user_id==contact_form.user.data).first()
+            # Create a new email message.
+            message = Message(contact_form.subject.data,recipients=[user.get_email_address()])
+            message.html = render_template('email/message.html', user=user, subject=contact_form.subject.data,message=contact_form.message.data)
+            # Send the message.
+            mail.send(message)
+            # Flash a success message.
+            flash('Successfully sent message.')
+            # Redirect to the dashboard.
+            return redirect(url_for('student.dashboard'))
+
+    return render_template('student/contact.html', contact_form=contact_form, error=error)

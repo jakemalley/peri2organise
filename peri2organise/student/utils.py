@@ -70,6 +70,12 @@ def select_users_by_role(role):
     """
     return User.query.filter(User.role==role)
 
+def select_users_by_roles(roles):
+    """
+    Query the database and select all users with roles in the roles list.
+    """
+    return User.query.filter(User.role.in_(roles))
+
 def select_user(user_id, **kwargs):
     """
     Query the database and select the user with

@@ -5,6 +5,7 @@
 # Flask Imports
 from flask_wtf import Form
 from wtforms import TextField
+from wtforms import TextAreaField
 from wtforms import SelectField
 from wtforms import BooleanField
 from wtforms.validators import StopValidation
@@ -45,3 +46,17 @@ class UpdatePersonalDetailsForm(Form):
     musical_grade = SelectField('musical grade', 
         choices=[('0','Ungraded'),('1','Grade 1'),('2','Grade 2'),('3','Grade 3'),('4','Grade 4'),('5','Grade 5'),('6','Grade 6'),('7','Grade 7'),('8','Grade 8')]
     )
+
+class ContactForm(Form):
+
+    """
+    Form for contacting tutors/staff members.
+    """
+
+    # Select field to select the recipient.
+    user = SelectField('user', coerce=int, choices=[('0','Select a Staff Member')])
+    # Text field for the message subject.
+    subject = TextField('subject', validators=[DataRequired()])
+    # Text area field for the message.
+    message = TextAreaField('message', validators=[DataRequired()])
+
