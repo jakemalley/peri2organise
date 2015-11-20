@@ -10,6 +10,7 @@ from flask import url_for
 from flask import flash
 from flask import request
 from flask.ext.login import current_user
+from wtforms.validators import StopValidation
 # Application imports
 from peri2organise import app
 from peri2organise import login_manager

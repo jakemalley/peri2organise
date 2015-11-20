@@ -1,18 +1,18 @@
 {% extends '__layout__.html' %}
-{% block title %}Personal Details{% endblock %}
+{% block title %}Contact Staff Member{% endblock %}
 {% block navbar %}
     {% include 'student/navbar.html' %}
 {% endblock %}
 {% block breadcrumbs %}
     <li><a href="{{url_for('student.dashboard')}}">Student Dashboard</a></li>
-    <li class="active">Personal Details</li>
+    <li class="active">Contact Staff Member</li>
 {% endblock %}
 {% block pills %}
     {% include 'student/pills.html' %}
 {% endblock %}
 {% block content %}
     <div class="page-header">
-      <h1>Student <small>personal details</small></h1>
+      <h1>Student <small>contact staff member</small></h1>
     </div>
     <form class="form-horizontal" role="form" method="post" action="">
     {{ contact_form.csrf_token }}

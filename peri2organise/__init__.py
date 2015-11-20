@@ -31,6 +31,9 @@ login_manager.login_view='auth.login'
 login_manager.refresh_view='auth.login'
 login_manager.needs_refresh_message = (u"To protect your account, please re authenticate to access this page.")
 
+# Import the error modules.
+import peri2organise.error
+
 # Import the user model, for the user loader.
 from peri2organise.models import User
 @login_manager.user_loader

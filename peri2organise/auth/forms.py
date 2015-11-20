@@ -9,7 +9,6 @@ from wtforms import PasswordField
 from wtforms import SelectField
 from wtforms import DecimalField
 from wtforms import BooleanField
-from wtforms.validators import StopValidation
 from wtforms.validators import DataRequired
 from wtforms.validators import Email
 from wtforms.validators import Length
