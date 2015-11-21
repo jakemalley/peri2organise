@@ -171,6 +171,48 @@ class User(db.Model):
         """
         return self.__dict__
 
+    def get_musical_instrument_type(self):
+        """
+        Returns the musical instrument type.
+        """
+        return self.musical_instrument_type.title()
+
+    def get_musical_instrument(self):
+        """
+        Returns the musical instrument.
+        """
+        return self.musical_instrument.title()
+
+    def get_musical_style(self):
+        """
+        Returns the musical style.
+        """
+        return self.musical_style.title()
+
+    def get_musical_grade(self):
+        """
+        Returns the musical grade.
+        """
+        if self.musical_grade=='0':
+            return 'Ungraded'
+        else:
+            return self.musical_grade
+
+    def get_lesson_type(self):
+        """
+        Returns the lesson type.
+        """
+        return self.lesson_type.title()
+
+    def get_lesson_pairing(self):
+        """
+        Returns the lesson pairing.
+        """
+        if self.lesson_type == 'individual':
+            return 'Not Applicable'
+        else:
+            return self.lesson_pairing.title()
+
 # Parent Model
 class Parent(db.Model):
     """

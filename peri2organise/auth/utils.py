@@ -5,6 +5,7 @@
 # Imports
 from functools import wraps
 # Flask Imports
+from flask import abort
 from flask import redirect
 from flask import url_for
 from flask import flash
@@ -43,8 +44,8 @@ def unauthorized_role():
     """
     # Flash an error message to the user.
     flash("You do not have the required privileges to access that page.","error")
-    # Redirect the to the page the came from, or their dashboard.
-    return redirect(request.referrer or get_current_user_dashboard())
+    # Abort with 401 unauthorized error.
+    abort(401)
 
 def login_required(role="ANY"):
     """
