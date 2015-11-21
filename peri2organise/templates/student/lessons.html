@@ -30,7 +30,7 @@
         {% for lesson in upcoming_lessons %}
         <tr>
             <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
-                    {{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+                    {{lesson.lesson_id}}></a></td>
             <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
             <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
             <td>{{lesson.get_lesson_duration()}} mins</td>
@@ -65,7 +65,7 @@
         {% for lesson in previous_lessons %}
         <tr>
             <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
-                    {{lesson.lesson_id}} <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></td>
+                    {{lesson.lesson_id}}></a></td>
             <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
             <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
             <td>{{lesson.get_lesson_duration()}} mins</td>
