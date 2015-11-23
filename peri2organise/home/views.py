@@ -11,7 +11,7 @@ from flask.ext.login import current_user
 from peri2organise.auth.forms import LoginForm
 from peri2organise.auth.utils import get_current_user_dashboard
 
-home_blueprint = Blueprint('home',__name__)
+home_blueprint = Blueprint('home', __name__)
 
 @home_blueprint.route('/')
 def index():
@@ -26,7 +26,7 @@ def index():
     # Create a login form object (for the nav bar form).
     login_form = LoginForm()
 
-    return render_template('home/index.html',login_form=login_form)
+    return render_template('home/index.html', login_form=login_form)
 
 @home_blueprint.route('/terms')
 def terms():
@@ -35,5 +35,6 @@ def terms():
     """
     # Create a login form object (for the nav bar form).
     login_form = LoginForm()
+
+    return render_template('home/terms.html', login_form=login_form)
     
-    return render_template('home/terms.html',login_form=login_form)

@@ -6,10 +6,8 @@
 from functools import wraps
 # Flask Imports
 from flask import abort
-from flask import redirect
 from flask import url_for
 from flask import flash
-from flask import request
 from flask.ext.login import current_user
 from wtforms.validators import StopValidation
 # Application imports
@@ -43,13 +41,13 @@ def unauthorized_role():
     page.
     """
     # Flash an error message to the user.
-    flash("You do not have the required privileges to access that page.","error")
+    flash("You do not have the required privileges to access that page.", "error")
     # Abort with 401 unauthorized error.
     abort(401)
 
 def login_required(role="ANY"):
     """
-    Login required decorator, capable of 
+    Login required decorator, capable of
     handling user roles.
     """
     def wrapper(func):
@@ -64,7 +62,7 @@ def login_required(role="ANY"):
                 # The user doesn't have permission to be here.
                 return unauthorized_role()
 
-            return func(*args,**kwargs)
+            return func(*args, **kwargs)
         return decorated_view
     return wrapper
 
@@ -74,7 +72,7 @@ def timed_safe_url_dump(data, salt='peri2organise'):
     able to be used in URLs. Used for creating password reset token/
     authentication tokens.
 
-    Salt can be used when generating safe URL tokens for different purposed, 
+    Salt can be used when generating safe URL tokens for different purposed,
     e.g. salt='reset_password' or salt='auth_token'.
     """
 
@@ -84,7 +82,7 @@ def timed_safe_url_dump(data, salt='peri2organise'):
         raise Exception('A Secret Key is required to generate tokens.')
     else:
         # Ensure key is a string.
-        if secret_key is None or type(secret_key) is not str:
+        if secret_key is None or isinstance(secret_key, str):
             raise Exception('A Secret Key is required to generate tokens.')
 
     # Create URL safe timed serializer.
@@ -96,8 +94,8 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
     """
     De-serializes the serialized data into the original data.
 
-    Salt can be used when generating safe URL tokens for different purposed, 
-    e.g. salt='reset_password' or salt='auth_token'. The salt must be the same 
+    Salt can be used when generating safe URL tokens for different purposed,
+    e.g. salt='reset_password' or salt='auth_token'. The salt must be the same
     as the salt used when the data was serialized.
     """
 
@@ -107,7 +105,7 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
         raise Exception('A Secret Key is required to generate tokens.')
     else:
         # Ensure key is a string.
-        if secret_key is None or type(secret_key) is not str:
+        if secret_key is None or isinstance(secret_key, str):
             raise Exception('A Secret Key is required to generate tokens.')
 
     # Create URL safe timed serializer.
@@ -120,21 +118,21 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
         encoded_payload = e.payload
         if encoded_payload is not None:
             try:
-                decoded_payload = serializer.load_payload(encoded_payload)
+                decoded_data = serializer.load_payload(encoded_payload)
             except BadData:
                 return False
         return False
     else:
         return decoded_data
 
-def is_on_email_domain(form,field):
+def is_on_email_domain(form, field):
     """
     Validator to ensure student's use their school email.
     """
     EMAIL_DOMAIN = app.config['EMAIL_DOMAIN']
     if field.data is not None:
         try:
-            user,domain = field.data.split('@')
+            user, domain = field.data.split('@')
             if domain != EMAIL_DOMAIN:
                 # Error message.
                 field.errors.append('Email domain must be '+EMAIL_DOMAIN+'.')
@@ -146,7 +144,7 @@ def is_on_email_domain(form,field):
             # Raise stop validation.
             raise StopValidation()
 
-def only_has_digits(form,field):
+def only_has_digits(form, field):
     """
     Validator to ensure a text field only contains digits.
     """
@@ -155,3 +153,4 @@ def only_has_digits(form,field):
         field.errors.append('Field must only contain digits.')
         # Raise stop validation.
         raise StopValidation()
+        

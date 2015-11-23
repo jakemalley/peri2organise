@@ -32,10 +32,10 @@ from peri2organise.models import Parent
 # Create auth blueprint.
 auth_blueprint = Blueprint('auth', __name__)
 
-@auth_blueprint.route('/login', methods=['GET','POST'])
+@auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
 
-    # Set empty error. 
+    # Set empty error.
     error = None
 
     # Create a login form object.
@@ -72,14 +72,13 @@ def login():
                     error = "Your account is not active, please contact your system administrator."
         else:
             error = "Invalid credentials."
-        
 
     return render_template('auth/login.html', error=error, login_form=login_form)
 
-@auth_blueprint.route('/register', methods=['GET','POST'])
+@auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
 
-    # Set empty error. 
+    # Set empty error.
     error = None
 
     # Create a registration form object.
@@ -90,17 +89,33 @@ def register():
     if request.method == 'POST' and registration_form.validate_on_submit():
         # Form is valid.
         # Check there isn't already a user with this email address.
-        if User.query.filter_by(email_address=registration_form.student_email_address.data).first() is not None:
+        user = User.query.filter_by(
+            email_address=registration_form.student_email_address.data
+        ).first()
+        if  user is not None:
             error = "A user is already associated with this email address."
-            return render_template('auth/register.html', error=error, registration_form=registration_form,login_form=login_form)
+            return render_template(
+                'auth/register.html', error=error,
+                registration_form=registration_form, login_form=login_form
+            )
         # Check there isn't already a parent with these details.
-        parent = Parent.query.filter_by(email_address=registration_form.parent_email_address.data).first()
+        parent = Parent.query.filter_by(
+            email_address=registration_form.parent_email_address.data
+        ).first()
+        # If the parent exists.
         if parent is not None:
             # Parent already exists, lets use there details.
             # But check the phone number also matches.
             if parent.get_telephone_number() != registration_form.parent_telephone_number.data:
-                error = "A parent is already associated with this email address, but could not be added to this student as the telephone number provided did not match. Please either use a different email address or the same telephone number as previously used."
-                return render_template('auth/register.html', error=error, registration_form=registration_form,login_form=login_form)
+                error = "A parent is already associated with this email address, \
+                    but could not be added to this student as the telephone number \
+                    provided did not match. Please either use a different email address \
+                    or the same telephone number as previously used."
+
+                return render_template(
+                    'auth/register.html', error=error,
+                    registration_form=registration_form, login_form=login_form
+                )
             else:
                 # If the telephone number matched, use this parent's ID.
                 parent_id = parent.parent_id
@@ -108,7 +123,12 @@ def register():
             # Add new parent.
             new_parent = Parent()
             # Update the new parent's details.
-            new_parent.update_parent_details(first_name=registration_form.parent_first_name.data, last_name=registration_form.parent_last_name.data, email_address=registration_form.parent_email_address.data,telephone_number=registration_form.parent_telephone_number.data)
+            new_parent.update_parent_details(
+                first_name=registration_form.parent_first_name.data,
+                last_name=registration_form.parent_last_name.data,
+                email_address=registration_form.parent_email_address.data,
+                telephone_number=registration_form.parent_telephone_number.data
+            )
             # Add the new parent to the database.
             db.session.add(new_parent)
             # Commit the changes to the database.
@@ -121,17 +141,36 @@ def register():
         # Create a password hash.
         password_hash = new_user.create_password_hash(registration_form.password.data)
         # Update the new user's details
-        new_user.update_user_details(first_name=registration_form.student_first_name.data,last_name=registration_form.student_last_name.data,email_address=registration_form.student_email_address.data,role='STU',tutor_group=registration_form.student_tutor_group.data,musical_instrument_type=registration_form.musical_instrument_type.data,musical_instrument=registration_form.musical_instrument.data,musical_style=registration_form.musical_style.data,musical_grade=int(registration_form.musical_grade.data),lesson_type=registration_form.lesson_type.data,lesson_pairing=registration_form.lesson_pairing.data,password=password_hash,parent_id=parent_id)
+        new_user.update_user_details(
+            first_name=registration_form.student_first_name.data,
+            last_name=registration_form.student_last_name.data,
+            email_address=registration_form.student_email_address.data,
+            role='STU',
+            tutor_group=registration_form.student_tutor_group.data,
+            musical_instrument_type=registration_form.musical_instrument_type.data,
+            musical_instrument=registration_form.musical_instrument.data,
+            musical_style=registration_form.musical_style.data,
+            musical_grade=int(registration_form.musical_grade.data),
+            lesson_type=registration_form.lesson_type.data,
+            lesson_pairing=registration_form.lesson_pairing.data,
+            password=password_hash,
+            parent_id=parent_id
+        )
         # Add the new user to the database.
         db.session.add(new_user)
         # Commit changes to the database.
         db.session.commit()
         # Flash a success message.
-        flash("Successfully added new user.","info")
+        flash("Successfully added new user.", "info")
         # Redirect them to the login page.
         return redirect(url_for('auth.login'))
 
-    return render_template('auth/register.html', error=error, registration_form=registration_form,login_form=login_form)
+    return render_template(
+        'auth/register.html',
+        error=error,
+        registration_form=registration_form,
+        login_form=login_form
+    )
 
 @auth_blueprint.route('/logout')
 @login_required()
@@ -146,9 +185,9 @@ def logout():
     # Redirect to the home page.
     return redirect(url_for('home.index'))
 
-@auth_blueprint.route('/forgotpassword', methods=['GET','POST'])
+@auth_blueprint.route('/forgotpassword', methods=['GET', 'POST'])
 def forgot_password():
-    
+
     # Set empty error.
     error = None
 
@@ -158,16 +197,21 @@ def forgot_password():
     if request.method == 'POST' and get_email_address_form.validate_on_submit():
         # If the request was a post and the form was valid.
         # Find the user by email.
-        user = User.query.filter(User.email_address==get_email_address_form.email_address.data).first()
+        user = User.query.filter(
+            User.email_address == get_email_address_form.email_address.data
+        ).first()
         # Ensure the user exists.
         if user is not None:
-            # Create an array of data to serialize. 
+            # Create an array of data to serialize.
             data = [user.get_first_name(), user.get_email_address(), user.password]
             # Create a timed safe url.
-            dump = timed_safe_url_dump(data,salt='password_reset_form')
+            dump = timed_safe_url_dump(data, salt='password_reset_form')
             # Create an email message.
             message = Message('Password Reset', recipients=[user.get_email_address()])
-            message.html = render_template('email/forgotpassword.html',name=user.get_first_name(),link=url_for('auth.reset_password',_external=True,token=dump))
+            message.html = render_template(
+                'email/forgotpassword.html', name=user.get_first_name(),
+                link=url_for('auth.reset_password', _external=True, token=dump)
+            )
             # Send the message.
             mail.send(message)
             # Flash a success message.
@@ -176,11 +220,14 @@ def forgot_password():
             return redirect(url_for('home.index'))
         else:
             error = 'Invalid E-Mail address.'
-            flash(error,'error')
+            flash(error, 'error')
 
-    return render_template('auth/forgotpassword.html',get_email_address_form=get_email_address_form,error=error)
+    return render_template(
+        'auth/forgotpassword.html',
+        get_email_address_form=get_email_address_form, error=error
+    )
 
-@auth_blueprint.route('/resetpassword',methods=['GET','POST'])
+@auth_blueprint.route('/resetpassword', methods=['GET', 'POST'])
 def reset_password():
 
     # Set an empty error.
@@ -190,24 +237,29 @@ def reset_password():
     reset_password_form = ResetPasswordForm()
 
     # Check the method is POST and the form is valid.
-    if request.method == 'POST' and reset_password_form.validate_on_submit():    
+    if request.method == 'POST' and reset_password_form.validate_on_submit():
 
         # Get the token.
         token = request.args.get('token')
         if not token:
             # If the token wasn't given in the url, create this error message.
-            error = "Password reset token not provided, try copying and pasting the link from your password reset email. Or return to the homepage."
+            error = "Password reset token not provided, try copying and pasting \
+                the link from your password reset email. Or return to the homepage."
         else:
             # Decode the token.
-            data = timed_safe_url_load(token,app.config['MAX_PASSWORD_TOKEN_AGE'],salt='password_reset_form')
+            data = timed_safe_url_load(
+                token, app.config['MAX_PASSWORD_TOKEN_AGE'],
+                salt='password_reset_form'
+            )
             # If the decode function returned false.
             if not data:
                 # Invalid token error.
-                error = "Invalid reset token, try copying and pasting the link from your password reset email. Or return to the homepage."
+                error = "Invalid reset token, try copying and pasting the link \
+                from your password reset email. Or return to the homepage."
             else:
                 # Proceed with the reset.
                 # Find the user.
-                user = User.query.filter(User.email_address==data[1]).first()
+                user = User.query.filter(User.email_address == data[1]).first()
                 # Check the password hash matches.
                 if data[2] == user.password:
                     # Reset the password, with the new password.
@@ -221,6 +273,10 @@ def reset_password():
                     # Redirect the user to the login page.
                     return redirect(url_for('auth.login'))
                 else:
-                    error = "Invalid reset token, try copying and pasting the link from your password reset email. Or return to the homepage."
+                    error = "Invalid reset token, try copying and pasting the link \
+                        from your password reset email. Or return to the homepage."
 
-    return render_template('auth/resetpassword.html',error=error,reset_password_form=reset_password_form)
+    return render_template(
+        'auth/resetpassword.html',
+        error=error, reset_password_form=reset_password_form
+    )
