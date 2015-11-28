@@ -44,7 +44,7 @@ def select_lessons_assoc(user_obj, **kwargs):
     # Check if the lesson_id is set.
     if 'lesson_id' in kwargs and kwargs['lesson_id']:
         # Filter for the given lesson_id.
-        base_query = base_query.filter(Lesson.lesson_id == kwargs['lesson_id'])
+        base_query = base_query.filter(UserLessonAssociation.lesson_id == kwargs['lesson_id'])
     # Check if the minimum date is set.
     if 'min_date' in kwargs and kwargs['min_date']:
         # Filter after the given date.
