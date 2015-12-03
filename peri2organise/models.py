@@ -280,6 +280,7 @@ class Lesson(db.Model):
     lesson_datetime = db.Column(db.DateTime, nullable=False)
     lesson_duration = db.Column(db.Integer, nullable=False)
     lesson_notes = db.Column(db.Text)
+    attendance_recorded = db.Column(db.Boolean)
 
     room_id = db.Column(db.Integer, db.ForeignKey('room.room_id'))
 
@@ -312,6 +313,13 @@ class Lesson(db.Model):
         Returns the Lesson's notes.
         """
         return self.lesson_notes
+
+    def is_attendance_recorded(self):
+        """
+        Returns True if the attendance has been recorded
+        or False if not.
+        """
+        return bool(self.attendance_recorded)
 
 # Room Model
 class Room(db.Model):
