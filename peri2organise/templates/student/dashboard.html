@@ -36,7 +36,6 @@
                         <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
                     {% elif  user.get_role() == 'TUT' %}
                         <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
-                    }
                     {% endif %}
                 {% endfor %}
             </td>
