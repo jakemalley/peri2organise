@@ -7,6 +7,8 @@
     <!-- Page Title -->
     <title>{% if config['BRAND'] %}{{config['BRAND']}} - {% else %}Peri2Organise - {% endif %}{% block title %}{% endblock %}</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='images/favicon.ico')}}">
     <!-- Bootstrap -->
     <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Custom Styles -->

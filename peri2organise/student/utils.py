@@ -66,21 +66,27 @@ def select_lessons_assoc(user_obj, **kwargs):
     # Check if the limit is set.
     if 'limit' in kwargs and kwargs['limit']:
         base_query = base_query.limit(5)
-    # Return all the selected objects.
-    return base_query.all()
+
+    # Check if single is set.
+    if 'single' in kwargs and kwargs['single']:
+        # Return the first selected object.
+        return base_query.first()
+    else:
+        # Return all the selected objects.
+        return base_query.all()
 
 def select_users_by_role(role):
     """
     Query the database and select all users with
     the role = role.
     """
-    return User.query.filter(User.role == role)
+    return User.query.filter(User.role == role).all()
 
 def select_users_by_roles(roles):
     """
     Query the database and select all users with roles in the roles list.
     """
-    return User.query.filter(User.role.in_(roles))
+    return User.query.filter(User.role.in_(roles)).all()
 
 def select_user(user_id, **kwargs):
     """

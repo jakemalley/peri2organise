@@ -25,8 +25,8 @@ class User(db.Model):
     last_login_date = db.Column(db.DateTime, nullable=False, default=db.func.now())
     is_account_active = db.Column(db.Boolean, nullable=False, default=True)
     password = db.Column(db.String(60), nullable=False)
-    role = db.Column(db.String(3),nullable=False)
-    
+    role = db.Column(db.String(3), nullable=False)
+
     # Specific to Students
     tutor_group = db.Column(db.String(6))
     musical_instrument_type = db.Column(db.String(10))
@@ -42,7 +42,6 @@ class User(db.Model):
     telephone_number = db.Column(db.String(11))
     speciality = db.Column(db.String(10))
 
-    
     # Relationships
     lessons = relationship('Lesson', secondary='user_lesson_association')
     instruments = relationship('Instrument', backref='user')
@@ -52,7 +51,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %s>' %(self.get_full_name())
-    
+
     def is_active(self):
         """
         Used by flask login to determine whether the account is active.
@@ -81,8 +80,8 @@ class User(db.Model):
         """
         Updates the User's details.
         """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     def update_last_login(self):
         """
@@ -106,9 +105,9 @@ class User(db.Model):
         """
         Compare a given password with the hash stored.
         """
-        return bcrypt.check_password_hash(self.password,password)
+        return bcrypt.check_password_hash(self.password, password)
 
-    def create_password_hash(self,password):
+    def create_password_hash(self, password):
         """
         Create a password hash and return it to the user.
         """
@@ -138,13 +137,13 @@ class User(db.Model):
         """
         return self.email_address
 
-    def get_join_date(self, time_format = '%d %b %G %H:%M'):
+    def get_join_date(self, time_format='%d %b %G %H:%M'):
         """
         Returns the User's join date in the given format.
         """
         return self.join_date.strftime(time_format)
 
-    def get_last_login_date(self, time_format = '%d %b %G %H:%M'):
+    def get_last_login_date(self, time_format='%d %b %G %H:%M'):
         """
         Returns the User's last login date in the given format.
         """
@@ -193,7 +192,7 @@ class User(db.Model):
         """
         Returns the musical grade.
         """
-        if self.musical_grade=='0':
+        if self.musical_grade == '0':
             return 'Ungraded'
         else:
             return self.musical_grade
@@ -235,8 +234,8 @@ class Parent(db.Model):
         """
         Updates the Parent's details.
         """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     def get_first_name(self):
         """
@@ -280,7 +279,7 @@ class Lesson(db.Model):
     lesson_datetime = db.Column(db.DateTime, nullable=False)
     lesson_duration = db.Column(db.Integer, nullable=False)
     lesson_notes = db.Column(db.Text)
-    attendance_recorded = db.Column(db.Boolean)
+    attendance_recorded = db.Column(db.Boolean, default=False)
 
     room_id = db.Column(db.Integer, db.ForeignKey('room.room_id'))
 
@@ -293,10 +292,10 @@ class Lesson(db.Model):
         """
         Updates the Lesson's details.
         """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
-    def get_lesson_date(self, time_format = '%d %b %G %H:%M'):
+    def get_lesson_date(self, time_format='%d %b %G %H:%M'):
         """
         Returns the Lesson's date in the given format.
         """
@@ -343,8 +342,8 @@ class Room(db.Model):
         """
         Updates the Room's details.
         """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     def get_location(self):
         """
@@ -380,8 +379,8 @@ class Instrument(db.Model):
         """
         Updates the Instrument's details.
         """
-        for key,value in kwargs.iteritems():
-            setattr(self,key,value)
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     def get_instrument_name(self):
         """
@@ -412,4 +411,5 @@ class UserLessonAssociation(db.Model):
     lesson = relationship(Lesson, backref=backref('user_association'))
 
     def __repr__(self):
-        return '<UserLessonAssociation (%s) and (%s)>' %(self.user.__repr__(), self.lesson.__repr__())
+        return '<UserLessonAssociation (%s) and (%s)>' \
+            %(self.user.__repr__(), self.lesson.__repr__())

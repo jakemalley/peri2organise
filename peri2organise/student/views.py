@@ -224,11 +224,11 @@ def personal_details():
     user_personal_details = current_user.get_personal_details()
     # Change the defaults in the form - for select boxes only!
     update_personal_details_form.musical_instrument_type.default = \
-        personal_details['musical_instrument_type']
+        user_personal_details['musical_instrument_type']
     update_personal_details_form.musical_style.default = \
-        personal_details['musical_style']
+        user_personal_details['musical_style']
     update_personal_details_form.musical_grade.default = \
-        personal_details['musical_grade']
+        user_personal_details['musical_grade']
     # Update the form to reflect changes.
     update_personal_details_form.process()
 
