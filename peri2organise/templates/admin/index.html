@@ -1,0 +1,11 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  <div class="alert alert-danger">
+    <p>
+        This page is for database administration, changing any data from these pages, could break the application database. <strong>Be Careful!</strong>This page is for <strong>staff members only!</strong> - Don't think you should be able to access it - report a problem to: <a href="mailto:{{config['CONTACT_EMAIL_ADDRESS']}}?Subject=Music%20Application%20-%20Admin%20Site%20Error%20(/admin)">{{config['CONTACT_EMAIL_ADDRESS']}}</a>
+    </p>
+  </div>
+
+  <a href="{{url_for('home.index')}}">Return Home</a>
+{% endblock %}

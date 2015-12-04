@@ -27,12 +27,15 @@ mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 # Flask Login Configuration
-login_manager.login_view='auth.login'
-login_manager.refresh_view='auth.login'
-login_manager.needs_refresh_message = (u"To protect your account, please re authenticate to access this page.")
+login_manager.login_view = 'auth.login'
+login_manager.refresh_view = 'auth.login'
+login_manager.needs_refresh_message = \
+    (u"To protect your account, please re authenticate to access this page.")
 
 # Import the error modules.
 import peri2organise.error
+# Import the admin module.
+import peri2organise.admin
 
 # Import the user model, for the user loader.
 from peri2organise.models import User
@@ -41,7 +44,7 @@ def load_user(user_id):
     """
     Load User object with user_id equal to the given user_id.
     """
-    return User.query.filter(User.user_id==user_id).first()
+    return User.query.filter(User.user_id == user_id).first()
 
 # Import Blueprints
 from peri2organise.home.views import home_blueprint
