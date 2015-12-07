@@ -1,0 +1,154 @@
+{% extends '__layout__.html' %}
+{% block title %}Add Lesson{% endblock %}
+{% block header %}
+<!-- Chosen CSS Styles -->
+<link href="{{url_for('static', filename='css/chosen.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li><a href="{{url_for('tutor.lessons')}}">Lessons</a></li>
+    <li class="active">Add Lesson</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>add lesson</small></h1>
+    </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <a role="button" class="btn btn-primary" href="{{url_for('tutor.lessons')}}">All Lessons</a>
+    </div><br/><br/>
+    <form class="form-horizontal" role="form" method="post" action="">
+        {{ add_lesson_form.csrf_token }}
+
+        <!-- If there is an error display it to the user. -->
+        {% if error %}
+            <p class="alert alert-danger">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="lesson_date" class="col-sm-2 control-label">Lesson Date</label>
+            <div class="col-sm-10">
+                {{ add_lesson_form.lesson_date(class="form-control",id="lesson_date") }}
+                {% for error in add_lesson_form.lesson_date.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_time" class="col-sm-2 control-label">Lesson Time</label>
+            <div class="col-sm-10">
+                <div class="form-inline">
+                    {{ add_lesson_form.lesson_hour(class="form-control",id="lesson_time", placeholder="Hour e.g. 13", style="max-width:120px;") }}
+                    :
+                    {{ add_lesson_form.lesson_minute(class="form-control",id="lesson_time", placeholder="Minute e.g. 30", style="max-width:120px;") }}
+                </div>
+                {% for error in add_lesson_form.lesson_hour.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+                {% for error in add_lesson_form.lesson_minute.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_duration" class="col-sm-2 control-label">Lesson Duration</label>
+            <div class="col-sm-10">
+                {{ add_lesson_form.lesson_duration(class="form-control",id="lesson_duration", placeholder="Duration in minutes") }}
+                {% for error in add_lesson_form.lesson_duration.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_notes" class="col-sm-2 control-label">Lesson Notes</label>
+            <div class="col-sm-10">
+                {{ add_lesson_form.lesson_notes(class="form-control",id="lesson_notes", placeholder="Lesson notes", style="resize: vertical;") }}
+                {% for error in add_lesson_form.lesson_notes.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_room_id" class="col-sm-2 control-label">Room</label>
+            <div class="col-sm-10">
+                {{ add_lesson_form.lesson_room_id(class="form-control",id="lesson_room_id") }}
+                {% for error in add_lesson_form.lesson_room_id.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="alert alert-info" role="alert">
+                <strong>Did you know?</strong>
+                Since you're a tutor, you can only create lessons for yourself! You don't need to select yourself from this list - you'll be automatically added anyway.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="users" class="col-sm-2 control-label">Users</label>
+            <div class="col-sm-10">
+                {{ add_lesson_form.users(class="form-control chosen-select",id="users") }}
+                {% for error in add_lesson_form.users.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default" id="submit_button">Add New Lesson</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block script %}
+<!-- Include chosen.js -->
+<script src="{{url_for('static', filename='js/chosen.jquery.js')}}" type="text/javascript"></script>
+<!-- chosen.js config -->
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+</script>
+{% endblock %}

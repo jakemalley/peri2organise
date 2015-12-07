@@ -1,0 +1,44 @@
+{% extends '__layout__.html' %}
+{% block title %}View Parent{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li><a href="{{url_for('tutor.students')}}">Students</a></li>
+    <li class="active">View Parent</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>view parent</small></h1>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <td>{{parent.parent_id}}</td>
+        </tr>
+        <tr>
+            <th>First Name</th>
+            <td>{{parent.get_first_name()}}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{parent.get_last_name()}}</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td>{{parent.get_email_address()}}</td>
+        </tr>
+        <tr>
+            <th>Telephone Number</th>
+            <td>{{parent.get_telephone_number()}}</td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><a href="{{url_for('tutor.contact_parent')}}">Contact Parent</a></td>
+        </tr>
+    </table>
+{% endblock %}

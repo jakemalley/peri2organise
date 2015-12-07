@@ -1,0 +1,207 @@
+{% extends '__layout__.html' %}
+{% block title %}Edit Lesson{% endblock %}
+{% block header %}
+<!-- Chosen CSS Styles -->
+<link href="{{url_for('static', filename='css/chosen.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li><a href="{{url_for('tutor.lessons')}}">Lessons</a></li>
+    <li class="active">View Lesson</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>edit lesson</small></h1>
+    </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <a role="button" class="btn btn-primary" href="{{url_for('tutor.lessons')}}">All Lessons</a>
+        <a role="button" class="btn btn-primary" href="{{url_for('tutor.view_lesson', lesson_id=lesson.lesson_id)}}">Edit Lesson</a>
+    </div><br/><br/>
+    <form class="form-horizontal" role="form" method="post" action="" id="edit_lesson_form">
+        {{ edit_lesson_form.csrf_token }}
+
+        <!-- If there is an error display it to the user. -->
+        {% if error %}
+            <p class="alert alert-danger">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="lesson_date" class="col-sm-2 control-label">Lesson Date</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.lesson_date(class="form-control",id="lesson_date", **{'data-toggle':'tooltip','data-placement':'top','title':'Select the lessons date.'}) }}
+                {% for error in edit_lesson_form.lesson_date.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_time" class="col-sm-2 control-label">Lesson Time</label>
+            <div class="col-sm-10">
+                <div class="form-inline">
+                    {{ edit_lesson_form.lesson_hour(class="form-control",id="lesson_time", placeholder="Hour e.g. 13", style="max-width:120px;",value=lesson.get_lesson_date('%H'), **{'data-toggle':'tooltip','data-placement':'top','title':'The hour the lesson begins.'}) }}
+                    :
+                    {{ edit_lesson_form.lesson_minute(class="form-control",id="lesson_time", placeholder="Minute e.g. 30", style="max-width:120px;",value=lesson.get_lesson_date('%M'), **{'data-toggle':'tooltip','data-placement':'top','title':'The minute past the hour the lesson begins.'}) }}
+                </div>
+                {% for error in edit_lesson_form.lesson_hour.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+                {% for error in edit_lesson_form.lesson_minute.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_duration" class="col-sm-2 control-label">Lesson Duration</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.lesson_duration(class="form-control",id="lesson_duration", placeholder="Duration in minutes", value=lesson.get_lesson_duration(),**{'data-toggle':'tooltip','data-placement':'top','title':'The duration of the lesson, in minutes.'}) }}
+                {% for error in edit_lesson_form.lesson_duration.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_notes" class="col-sm-2 control-label">Lesson Notes</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.lesson_notes(class="form-control",id="lesson_notes", placeholder="Lesson notes", style="resize: vertical;", **{'data-toggle':'tooltip','data-placement':'top','title':'Any notes you wish to add to this lesson (optional).'}) }}
+                {% for error in edit_lesson_form.lesson_notes.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_room_id" class="col-sm-2 control-label">Room</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.lesson_room_id(class="form-control",id="lesson_room_id", **{'data-toggle':'tooltip','data-placement':'top','title':'The room the lesson will be in.'}) }}
+                {% for error in edit_lesson_form.lesson_room_id.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="alert alert-info" role="alert">
+                <strong>Did you know?</strong>
+                You can add new users to this lesson, by selecting them from the list.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="add_users" class="col-sm-2 control-label">Add New Users</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.add_users(class="form-control chosen-select",id="add_users") }}
+                {% for error in edit_lesson_form.add_users.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="alert alert-warning" role="alert">
+                <strong>Be Careful!</strong>
+                Selecting users from this list will remove them from the lesson, since they're already attending.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="remove_users" class="col-sm-2 control-label">Remove Users</label>
+            <div class="col-sm-10">
+                {{ edit_lesson_form.remove_users(class="form-control chosen-select",id="remove_users") }}
+                {% for error in edit_lesson_form.remove_users.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#confirm_modal">Save Changes</button>
+            </div>
+        </div>
+    </form>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirm_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Lesson Confirmation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>You've made your changes and your ready to submit the form? This could send automatic emails to all the new students you've added to this lesson as well as send emails to those student's you've removed.</p>
+
+                    <div class="alert alert-danger" role="alert">
+                        Are you sure you want to continue?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Back</button>
+                    <button type="button" class="btn btn-primary" id="submit_button">Lets Go!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+<!-- Include chosen.js -->
+<script src="{{url_for('static', filename='js/chosen.jquery.js')}}" type="text/javascript"></script>
+<!-- chosen.js config -->
+<script type="text/javascript">
+    // Chosen Select Fields Config.
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+    // When the submit button on the modal is pressed.
+    $('#submit_button').click(function() {
+        // Submit the form.
+        $('#edit_lesson_form').submit();
+    });
+    // Add tool tips.
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

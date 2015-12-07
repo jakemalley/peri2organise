@@ -1,0 +1,67 @@
+{% extends '__layout__.html' %}
+{% block title %}Tutor Dashboard{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li><a href="{{url_for('tutor.lessons')}}">Lessons</a></li>
+    <li class="active">View Lesson</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>view lesson</small></h1>
+    </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <a role="button" class="btn btn-primary" href="{{url_for('tutor.lessons')}}">All Lessons</a>
+        <a role="button" class="btn btn-primary" href="{{url_for('tutor.edit_lesson', lesson_id=lesson.lesson_id)}}">Edit Lesson</a>
+    </div><br/><br/>
+    <table class="table table-hover">
+        <tr>
+            <th>Lesson ID</th>
+            <td>{{lesson.lesson_id}}</td>
+        </tr>
+        <tr>
+            <th>Lesson Date</th>
+            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+        </tr>
+        <tr>
+            <th>Lesson Time</th>
+            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+        </tr>
+        <tr>
+            <th>Lesson Duration</th>
+            <td>{{lesson.get_lesson_duration()}} mins</td>
+        </tr>
+        <tr>
+            <th>Lesson Notes</th>
+            <td>{{lesson.get_lesson_notes()}}</td>
+        </tr>
+        <tr>
+            <th>Room</th>
+            <td>{{lesson.room.get_location()}}</td>
+        </tr>
+        <tr>
+            <th>Others Attending</th>
+            <td>
+                {% for user in lesson.users %}
+                    {%if user.get_role()=='STU' %}
+                        <a href="{{url_for('tutor.view_student',student_id=user.user_id)}}">
+                        {{user.get_full_name()}}
+                        </a>
+                    {% else %}
+                        {{user.get_full_name()}}
+                    {% endif %}
+                    <br/>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>   
+            <th>Attendance</th>
+            <td><a href="#">View attendance for this lesson.</a></td>
+        </tr>
+    </table>
+{% endblock %}

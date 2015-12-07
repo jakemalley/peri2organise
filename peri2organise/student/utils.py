@@ -102,4 +102,3 @@ def select_user(user_id, **kwargs):
         base_query = base_query.filter(User.role == kwargs['role'])
     # Return the first result (As we are filtering by a unique id, this should be one anyway.)
     return base_query.first()
-

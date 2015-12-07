@@ -1,0 +1,83 @@
+{% extends '__layout__.html' %}
+{% block title %}Tutor Dashboard{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li><a href="{{url_for('tutor.attendance')}}">Attendance</a></li>
+    <li class="active">Record Attendance</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>record attendance</small></h1>
+    </div>
+    {% if lesson.is_attendance_recorded() %}
+        <div class="alert alert-success">
+            The register has been taken for this lesson, however you can still update the recorded marks.
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            The register has not been fully taken for this lesson yet. Ensure all students have recorded attendance.
+        </div>
+    {% endif %}
+    <table class="table table-hover">
+        <tr>
+            <th>Lesson ID</th>
+            <th>Lesson Date</th>
+            <th>Lesson Time</th>
+            <th>Lesson Duration</th>
+            <th>Lesson Notes</th>
+            <th>Room</th>
+        </tr>
+        <tr>
+            <td>{{lesson.lesson_id}}</td>
+            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{lesson.get_lesson_duration()}} mins</td>
+            <td>{{lesson.get_lesson_notes()}}</td>
+            <td>{{lesson.room.get_location()}}</td>
+        </tr>
+    </table>
+    <h1><small>students</small></h1>
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Student's Name</th>
+            <th>Tutor Group</th>
+            <th>Current Attendance Value</th>
+            <th>Update Attendance</th>
+        </tr>
+        {% for assoc in lesson.user_association %}
+            {% if assoc.user.get_role() == 'STU' %}
+            <tr>
+                <td>{{assoc.user.user_id}}</td>
+                <td>{{assoc.user.get_full_name()}}</td>
+                <td>{{assoc.user.get_tutor_group()}}</td>
+                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+                <td>
+                    <form class="form-inline" role="form" method="post" action="">
+                        {{ record_single_attendance_form.csrf_token }}
+                        <div class="form-group">
+                            {{ record_single_attendance_form.attendance_code(class="form-control") }}
+                        </div>
+                        {% for error in record_single_attendance_form.attendance_code.errors %}
+                        <p>
+                            <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                            {{ error }}
+                        </p>
+                        {% endfor %}
+
+                        {{ record_single_attendance_form.user_id(value=assoc.user.user_id) }}
+
+                        <button type="submit" class="btn btn-default">Save</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endblock %}

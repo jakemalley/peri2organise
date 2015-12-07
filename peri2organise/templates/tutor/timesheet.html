@@ -1,0 +1,93 @@
+{% extends '__layout__.html' %}
+{% block title %}Time Sheet{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li class="active">Time Sheet</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>time sheet</small></h1>
+    </div>
+    <form class="form-inline" method="POST" action="">
+        <h4>Filter results:</h4>
+        {{ select_date_form.csrf_token }}
+        <div class="form-group">
+            <label for="min_date">From</label>
+            {{ select_date_form.min_date(class="form-control",id="min_date") }}
+                {% for error in select_date_form.min_date.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="max_date">To</label>
+            {{ select_date_form.max_date(class="form-control",id="max_date") }}
+            {% for error in select_date_form.max_date.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-default">Filter</button>
+        <a class="btn btn-primary" href="{{url_for('tutor.timesheet')}}">Filter the next 30 days</a>
+    </form>
+    {% if hours_worked %}
+    <div class="page-header">
+      <h1><small>hours worked</small></h1>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>Total Hours</th>
+            <td>{{'%.2f' % hours_worked}}</td>
+        </tr>
+    </table>
+    {% else %}
+    <br/><br/><div class="alert alert-danger" role="alert">No data available, try changing the filter dates.</div>
+    {% endif %}
+    {% if time_sheet_lessons %}
+    <div class="page-header">
+      <h1><small>lessons</small></h1>
+    </div>
+    <table class="table table-hover">
+        <!-- Header Row -->
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Lesson Duration</th>
+            <th>Tutor</th>
+            <th>Lesson Notes</th>
+            <th>Room</th>
+        </tr>
+        {% for lesson in time_sheet_lessons %}
+        <tr>
+            <td><a href="{{url_for('tutor.view_lesson',lesson_id=lesson.lesson_id)}}">
+                    {{lesson.lesson_id}}</a></td>
+            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+            <td>{{lesson.get_lesson_duration()}} mins</td>
+            <td>
+                {% for user in lesson.users %}
+                    {% if user.get_role() == 'STA' %}
+                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% elif  user.get_role() == 'TUT' %}
+                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{lesson.get_lesson_notes()}}</td>
+            <td>{{lesson.room.get_location()}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}

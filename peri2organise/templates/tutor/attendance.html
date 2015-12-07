@@ -1,0 +1,132 @@
+{% extends '__layout__.html' %}
+{% block title %}Tutor Dashboard{% endblock %}
+{% block navbar %}
+    {% include 'tutor/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('tutor.dashboard')}}">Tutor Dashboard</a></li>
+    <li class="active">Attendance</li>
+{% endblock %}
+{% block pills %}
+    {% include 'tutor/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Tutor <small>attendance</small></h1>
+    </div>
+    <form class="form-inline" method="POST" action="">
+        <h4>Filter results:</h4>
+        {{ select_date_form.csrf_token }}
+        <div class="form-group">
+            <label for="min_date">From</label>
+            {{ select_date_form.min_date(class="form-control",id="min_date") }}
+                {% for error in select_date_form.min_date.errors %}
+                <p>
+                    <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                    {{ error }}
+                </p>
+                {% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="max_date">To</label>
+            {{ select_date_form.max_date(class="form-control",id="max_date") }}
+            {% for error in select_date_form.max_date.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-default">Filter</button>
+        <a class="btn btn-primary" href="{{url_for('tutor.attendance')}}">Clear Filter</a>
+    </form><br/>
+    <div class="input-group">
+        <span class="input-group-addon" id="searchbar"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+        <input type="text" class="form-control" placeholder="Type to search" aria-describedby="searchbar" id="searchinput_upcoming_lessons">
+    </div><br/>
+    <!-- User's lessons that require attendance to be recorded. -->
+    <p>Attendance Required:</p>
+    <table class="table table-hover" id="upcoming_lessons">
+        <!-- Header Row -->
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Lesson Duration</th>
+                <th>Students</th>
+                <th>Lesson Notes</th>
+                <th>Room</th>
+                <th>Register</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lesson in no_attendance_recorded %}
+            <tr>
+                <td><a href="{{url_for('tutor.view_attendance',lesson_id=lesson.lesson_id)}}">
+                        {{lesson.lesson_id}}</a></td>
+                <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+                <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+                <td>{{lesson.get_lesson_duration()}} mins</td>
+                <td>
+                    {% for user in lesson.users %}
+                        {% if user.get_role() == 'STU' %}
+                            <a href="{{url_for('tutor.view_student',student_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{lesson.get_lesson_notes()}}</td>
+                <td>{{lesson.room.get_location()}}</td>
+                <td><a class="btn btn-primary btn-sm" role="button" href="{{url_for('tutor.record_attendance',lesson_id=lesson.lesson_id)}}">Register</a></td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Options <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% if not lesson.is_attendance_recorded() %}
+                                <li><a href="{{url_for('tutor.record_attendance',lesson_id=lesson.lesson_id)}}">Register</a></li>
+                            {% endif %}
+                            <li><a href="{{url_for('tutor.view_attendance',lesson_id=lesson.lesson_id)}}">View Attendance</a></li>
+                            <li><a href="{{url_for('tutor.view_lesson',lesson_id=lesson.lesson_id)}}">View Lesson</a></li>
+                            <li><a href="{{url_for('tutor.edit_lesson',lesson_id=lesson.lesson_id)}}">Edit Lesson</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{url_for('tutor.add_lesson')}}">Add New Lesson</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+/* Based on dfsq's example here: http://stackoverflow.com/questions/9127498/how-to-perform-a-real-time-search-and-filter-on-a-html-table */
+$('#searchinput_upcoming_lessons').keyup(function() {
+    console.log('ok');
+    
+    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+        reg = RegExp(val, 'i'),
+        text;
+    
+    $('#upcoming_lessons tbody tr').show().filter(function() {
+        text = $(this).text().replace(/\s+/g, ' ');
+        return !reg.test(text);
+    }).hide();
+});
+$('#searchinput_previous_lessons').keyup(function() {
+    console.log('ok');
+    
+    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+        reg = RegExp(val, 'i'),
+        text;
+    
+    $('#previous_lessons tbody tr').show().filter(function() {
+        text = $(this).text().replace(/\s+/g, ' ');
+        return !reg.test(text);
+    }).hide();
+});
+</script>
+{% endblock %}
