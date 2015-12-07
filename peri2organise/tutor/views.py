@@ -13,6 +13,7 @@ from flask import url_for
 from flask.ext.login import current_user
 from flask.ext.mail import Message
 # Application Imports
+from peri2organise import app
 from peri2organise import db
 from peri2organise import mail
 from peri2organise.models import Lesson
@@ -25,7 +26,6 @@ from peri2organise.student.utils import select_future_lessons
 from peri2organise.student.utils import select_past_lessons
 from peri2organise.student.utils import select_lessons_assoc
 from peri2organise.student.utils import select_user
-from peri2organise.student.utils import select_users_by_role
 from peri2organise.student.utils import select_users_by_roles
 from peri2organise.student.forms import ContactForm
 from peri2organise.tutor.forms import AddLessonForm
@@ -39,6 +39,7 @@ from peri2organise.tutor.utils import select_students
 from peri2organise.tutor.utils import select_parents
 from peri2organise.tutor.utils import select_lessons
 from peri2organise.tutor.utils import check_attendance_complete
+from peri2organise.tutor.utils import send_lesson_update
 # Imports
 from datetime import datetime
 from datetime import time
@@ -359,6 +360,11 @@ def record_attendance(lesson_id):
             flash("Successfully updated lesson attendance.")
         else:
             abort(500)
+
+        if assoc.attendance_code == 'L' or assoc.attendance_code == 'N':
+            # Send an email update.
+            html = 'Attendance for your lesson on: ' + assoc.lesson.get_lesson_date() + ' has been updated. Your attendance is now recorded as: ' + assoc.get_lesson_attendance_str()
+            send_lesson_update(assoc.user, html, parent=True)
 
         if check_attendance_complete(lesson):
             # The attendance is complete.

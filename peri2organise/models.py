@@ -413,3 +413,18 @@ class UserLessonAssociation(db.Model):
     def __repr__(self):
         return '<UserLessonAssociation (%s) and (%s)>' \
             %(self.user.__repr__(), self.lesson.__repr__())
+
+    def get_lesson_attendance_str(self):
+        """
+        Return lesson attendance text.
+        """
+        if self.attendance_code == 'A':
+            return 'Present'
+        elif self.attendance_code == 'P':
+            return 'Planned Absence'
+        elif self.attendance_code == 'L':
+            return 'Late'
+        elif self.attendance_code == 'N':
+            return 'Absent, No Reason Provided'
+        else:
+            return 'Not Recorded' 

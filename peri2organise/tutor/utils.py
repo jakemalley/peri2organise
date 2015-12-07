@@ -2,7 +2,11 @@
 # Jake Malley
 # Utils used throughout the tutor blueprint.
 
+# Flask Imports
+from flask import render_template
+from flask.ext.mail import Message
 # Application Imports
+from peri2organise import mail
 from peri2organise.models import Lesson
 from peri2organise.models import Parent
 from peri2organise.models import User
@@ -112,3 +116,23 @@ def check_attendance_complete(lesson_obj):
                 return False
 
     return True
+
+def send_lesson_update(user_obj, update_html, **kwargs):
+    """
+    Sends a lesson update to the user/their parent.
+    """
+
+    recipients = [user_obj.get_email_address()]
+
+    if 'parent' in kwargs and kwargs['parent']:
+        recipients.append(user_obj.parent.get_email_address())
+
+    message = Message('Something has been updated.', recipients=recipients)
+    # Render the html.
+    message.html = render_template(
+        'email/update.html',
+        message=update_html
+    )
+
+    # Send the mail.
+    mail.send(message)
