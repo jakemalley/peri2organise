@@ -68,7 +68,7 @@
         <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
                 <label>
-                    {{ registration_form.parent_signature }} I agree to the terms and conditions.
+                    {{ registration_form.parent_signature }} I agree to the <a href="{{url_for('home.terms')}}">terms and conditions.</a>
                 </label>
                 {% for error in registration_form.parent_signature.errors %}
                     <p>
@@ -243,7 +243,7 @@
         <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
                 <label>
-                    {{ registration_form.student_signature }} I agree to the terms and conditions.
+                    {{ registration_form.student_signature }} I agree to the <a href="{{url_for('home.terms')}}">terms and conditions.</a>
                 </label>
                 {% for error in registration_form.student_signature.errors %}
                     <p>
