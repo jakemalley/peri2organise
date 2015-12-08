@@ -14,6 +14,7 @@ from flask.ext.login import current_user
 # Application Import
 from peri2organise import app
 from peri2organise import db
+from peri2organise.auth.utils import unauthorized_role
 from peri2organise.models import User
 from peri2organise.models import Parent
 from peri2organise.models import Lesson
@@ -33,8 +34,12 @@ class AuthenticationMixin(object):
     def _handle_view(self, name, **kwargs):
         # If not able to login.
         if not self.is_accessible():
-            # Redirect to login page.
-            return redirect(url_for('auth.login', next=request.url))
+            if current_user.is_authenticated:
+                # Return unauthorized role error.
+                return unauthorized_role()
+            else:
+                # Redirect to login page.
+                return redirect(url_for('auth.login', next=request.url))
 
 class AdminIndex(AuthenticationMixin, AdminIndexView):
 

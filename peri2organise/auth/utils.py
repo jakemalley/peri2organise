@@ -42,8 +42,8 @@ def unauthorized_role():
     """
     # Flash an error message to the user.
     flash("You do not have the required privileges to access that page.", "error")
-    # Abort with 401 unauthorized error.
-    abort(401)
+    # Abort with 403 unauthorized error.
+    abort(403)
 
 def login_required(role="ANY"):
     """
