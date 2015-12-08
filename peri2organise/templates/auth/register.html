@@ -16,3 +16,22 @@
     </div>
     {% include 'auth/register_form.html' %}
 {% endblock %}
+{% block script %}
+<script type='text/javascript'>
+$('#input_lesson_pairing').attr('disabled', true)
+$('#input_musical_instrument_type').on('change', function() {
+    if ($(this).val() == 'singing') {
+        $('#input_musical_instrument').attr('disabled', true);
+    } else {
+      $('#input_musical_instrument').attr('disabled', false);
+    }
+});
+$('#input_lesson_type').on('change', function() {
+    if ($(this).val() == 'individual') {
+        $('#input_lesson_pairing').attr('disabled', true);
+    } else {
+      $('#input_lesson_pairing').attr('disabled', false);
+    }
+});
+</script>
+{% endblock %}

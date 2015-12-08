@@ -34,6 +34,9 @@ auth_blueprint = Blueprint('auth', __name__)
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Login to the application.
+    """
 
     # Set empty error.
     error = None
@@ -77,6 +80,9 @@ def login():
 
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Register for the application.
+    """
 
     # Set empty error.
     error = None
@@ -140,6 +146,13 @@ def register():
         new_user = User()
         # Create a password hash.
         password_hash = new_user.create_password_hash(registration_form.password.data)
+
+        # If the user selected a musical instrument type of singing set instrument to voice.
+        if registration_form.musical_instrument.data == 'singing':
+            new_user_musical_instrument = 'Voice'
+        else:
+            new_user_musical_instrument = registration_form.musical_instrument.data
+
         # Update the new user's details
         new_user.update_user_details(
             first_name=registration_form.student_first_name.data,
@@ -148,7 +161,7 @@ def register():
             role='STU',
             tutor_group=registration_form.student_tutor_group.data,
             musical_instrument_type=registration_form.musical_instrument_type.data,
-            musical_instrument=registration_form.musical_instrument.data,
+            musical_instrument=new_user_musical_instrument,
             musical_style=registration_form.musical_style.data,
             musical_grade=int(registration_form.musical_grade.data),
             lesson_type=registration_form.lesson_type.data,
@@ -187,6 +200,9 @@ def logout():
 
 @auth_blueprint.route('/forgotpassword', methods=['GET', 'POST'])
 def forgot_password():
+    """
+    Generate a forgot password token and email to user.
+    """
 
     # Set empty error.
     error = None
@@ -229,6 +245,9 @@ def forgot_password():
 
 @auth_blueprint.route('/resetpassword', methods=['GET', 'POST'])
 def reset_password():
+    """
+    Reset user's password.
+    """
 
     # Set an empty error.
     error = None

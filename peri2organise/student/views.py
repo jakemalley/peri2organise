@@ -194,6 +194,9 @@ def attendance():
 @student_blueprint.route('/personaldetails', methods=['GET', 'POST'])
 @login_required(role='STU')
 def personal_details():
+    """
+    View and update personal details.
+    """
 
     # Create the form object, for updating details.
     update_personal_details_form = UpdatePersonalDetailsForm()
@@ -241,6 +244,9 @@ def personal_details():
 @student_blueprint.route('/contact', methods=['GET', 'POST'])
 @login_required(role='STU')
 def contact():
+    """
+    Contact a member of staff.
+    """
 
     # Create an empty error.
     error = None
