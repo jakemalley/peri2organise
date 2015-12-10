@@ -139,7 +139,6 @@
 <script type='text/javascript'>
 /* Based on dfsq's example here: http://stackoverflow.com/questions/9127498/how-to-perform-a-real-time-search-and-filter-on-a-html-table */
 $('#searchinput_upcoming_lessons').keyup(function() {
-    console.log('ok');
     
     var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
         reg = RegExp(val, 'i'),
@@ -151,7 +150,6 @@ $('#searchinput_upcoming_lessons').keyup(function() {
     }).hide();
 });
 $('#searchinput_previous_lessons').keyup(function() {
-    console.log('ok');
     
     var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
         reg = RegExp(val, 'i'),

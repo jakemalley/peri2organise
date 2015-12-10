@@ -114,7 +114,7 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
     try:
         # Try and decode the data.
         decoded_data = serializer.loads(serialized_data, max_age=max_age_in_seconds)
-    except BadSignature, e:
+    except BadSignature as e:
         encoded_payload = e.payload
         if encoded_payload is not None:
             try:

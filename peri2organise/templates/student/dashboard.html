@@ -13,75 +13,107 @@
     <div class="page-header">
       <h1>Student <small>dashboard</small></h1>
     </div>
+    <div class="input-group">
+        <span class="input-group-addon" id="searchbar"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+        <input type="text" class="form-control" placeholder="Type to search" aria-describedby="searchbar" id="search">
+    </div><br/>
     <!-- User's lessons. -->
     Lessons:
     <table class="table table-hover">
-        <!-- Header Row -->
-        <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Tutor</th>
-            <th>Options</th>
-        </tr>
-        {% for lesson in lessons %}
-        <tr>
-            <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
-                    {{lesson.lesson_id}}</a></td>
-            <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
-            <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
-            <td>
-                {% for user in lesson.users %}
-                    {% if user.get_role() == 'STA' %}
-                        <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
-                    {% elif  user.get_role() == 'TUT' %}
-                        <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
-                    {% endif %}
-                {% endfor %}
-            </td>
-            <td>Options go here.</td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <!-- Header Row -->
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Tutor</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lesson in lessons %}
+            <tr>
+                <td><a href="{{url_for('student.view_lesson',lesson_id=lesson.lesson_id)}}">
+                        {{lesson.lesson_id}}</a></td>
+                <td>{{lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+                <td>{{lesson.get_lesson_date(time_format='%H:%M')}}</td>
+                <td>
+                    {% for user in lesson.users %}
+                        {% if user.get_role() == 'STA' %}
+                            <a href="{{url_for('student.view_staff',staff_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                        {% elif  user.get_role() == 'TUT' %}
+                            <a href="{{url_for('student.view_tutor',tutor_id=user.user_id)}}">{{user.get_full_name()}}</a><br/>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>Options go here.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <!-- User's attended lessons -->
     Attended Lessons:
     <table class="table table-hover">
-        <!-- Header Row -->
-        <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Attendance Notes</th>
-            <th>Attendance</th>
-        </tr>
-        {% for assoc in attended_lessons_assoc %}
-        <tr>
-            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}}</a></td> 
-            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
-            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
-            <td>{{assoc.attendance_notes}}
-            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <!-- Header Row -->
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Attendance Notes</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assoc in attended_lessons_assoc %}
+            <tr>
+                <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}}</a></td> 
+                <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+                <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+                <td>{{assoc.attendance_notes}}</td>
+                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     Unknown Attendance:
     <table class="table table-hover">
-        <!-- Header Row -->
-        <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Attendance Notes</th>
-            <th>Attendance</th>
-        </tr>
-        {% for assoc in unknown_lessons_assoc %}
-        <tr>
-            <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}}</a></td> 
-            <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
-            <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
-            <td>{{assoc.attendance_notes}}
-            <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <!-- Header Row -->
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Attendance Notes</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assoc in unknown_lessons_assoc %}
+            <tr>
+                <td><a href="{{url_for('student.view_lesson',lesson_id=assoc.lesson.lesson_id)}}">{{assoc.lesson.lesson_id}}</a></td> 
+                <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
+                <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
+                <td>{{assoc.attendance_notes}}</td>
+                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+/* Based on dfsq's example here: http://stackoverflow.com/questions/9127498/how-to-perform-a-real-time-search-and-filter-on-a-html-table */
+$('#search').keyup(function() {
+    
+    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+        reg = RegExp(val, 'i'),
+        text;
+    
+    $('table tbody tr').show().filter(function() {
+        text = $(this).text().replace(/\s+/g, ' ');
+        return !reg.test(text);
+    }).hide();
+});
+</script>
 {% endblock %}
