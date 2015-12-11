@@ -160,7 +160,8 @@ def add_lesson():
                 html = 'A new lesson has been created on: ' + new_lesson.get_lesson_date()
 
                 # Send a lesson update.
-                send_lesson_update(user_object, html,
+                send_lesson_update(
+                    user_object, html,
                     url_for('student.lessons', _external=True)
                 )
 
@@ -233,6 +234,24 @@ def edit_lesson(lesson_id):
             room_id=edit_lesson_form.lesson_room_id.data
         )
 
+        if app.config['UPDATE_ON_EDIT_LESSON']:
+            # Iterate through the users and send updates.
+            for user in lesson.users:
+                if user.get_role() == 'STU':
+                    # Send an email update.
+                    html = 'Your lesson on: ' + lesson.get_lesson_date() + \
+                        ' has been updated.'
+
+                    # Send a lesson update.
+                    send_lesson_update(
+                        user, html,
+                        url_for(
+                            'student.view_lesson',
+                            lesson_id=lesson.lesson_id,
+                            _external=True
+                        )
+                    )
+
         # Iterate through the users to add.
         for user_id in edit_lesson_form.add_users.data:
             # Select the user object.
@@ -246,10 +265,12 @@ def edit_lesson(lesson_id):
                 html = 'You have been added to a lesson on: ' + lesson.get_lesson_date()
 
                 # Send a lesson update.
-                send_lesson_update(user_object, html,
-                    url_for('student.view_lesson',
-                            lesson_id=lesson.lesson_id,
-                            _external=True
+                send_lesson_update(
+                    user_object, html,
+                    url_for(
+                        'student.view_lesson',
+                        lesson_id=lesson.lesson_id,
+                        _external=True
                     )
                 )
         # Iterate through the users to remove.
@@ -399,10 +420,12 @@ def record_attendance(lesson_id):
                 assoc.get_lesson_attendance_str()
 
             # Send a lesson update.
-            send_lesson_update(assoc.user, html,
-                url_for('student.view_lesson',
-                        lesson_id=lesson_id,
-                        _external=True
+            send_lesson_update(
+                assoc.user, html,
+                url_for(
+                    'student.view_lesson',
+                    lesson_id=lesson_id,
+                    _external=True
                 ),
                 parent=True
             )
