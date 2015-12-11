@@ -34,7 +34,7 @@ postgres:
   image: postgres:latest
   environment:
     POSTGRES_USER: "peri"
-    POSTGRES_PASSWORD: "root"
+    POSTGRES_PASSWORD: "password"
     POSTGRES_DB: "peri2organise"
   volumes_from:
     - data

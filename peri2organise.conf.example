@@ -5,10 +5,8 @@ DEVELOPMENT_SERVER_HOST='127.0.0.1'
 DEVELOPMENT_SERVER_PORT=5000
 # Application Configuration
 SECRET_KEY='a super secret key'
-# MySQL
-SQLALCHEMY_DATABASE_URI='mysql://user:pass@dbhost/database'
 # Postgres SQL
-#SQLALCHEMY_DATABASE_URI='postgresql://user:pass@dbhost/database'
+SQLALCHEMY_DATABASE_URI='postgresql://peri:pass@postgres/peri2organise'
 BRAND='Frome College'
 EMAIL_DOMAIN='fromecollege.org'
 MAIL_SERVER='smtp.host.com'
@@ -20,6 +18,5 @@ MAIL_PASSWORD='password'
 MAIL_DEFAULT_SENDER='no-reply@fromecollege.org'
 MAX_PASSWORD_TOKEN_AGE=1800
 CONTACT_EMAIL_ADDRESS='contact@fromecollege.org'
-
 UPDATE_ON_NEW_LESSON=True
 UPDATE_ON_EDIT_LESSON=False
