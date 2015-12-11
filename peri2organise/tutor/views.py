@@ -154,6 +154,16 @@ def add_lesson():
             # Append it to the lessons users.
             new_lesson.users.append(user_object)
 
+            # Send an update.
+            if app.config['UPDATE_ON_NEW_LESSON']:
+                # Send an email update.
+                html = 'A new lesson has been created on: ' + new_lesson.get_lesson_date()
+
+                # Send a lesson update.
+                send_lesson_update(user_object, html,
+                    url_for('student.lessons', _external=True)
+                )
+
         # Add the current user to the lesson.
         new_lesson.users.append(current_user)
 
@@ -231,6 +241,17 @@ def edit_lesson(lesson_id):
             if user_object not in lesson.users:
                 # Append it to the lessons users.
                 lesson.users.append(user_object)
+
+                # Send an email update.
+                html = 'You have been added to a lesson on: ' + lesson.get_lesson_date()
+
+                # Send a lesson update.
+                send_lesson_update(user_object, html,
+                    url_for('student.view_lesson',
+                            lesson_id=lesson.lesson_id,
+                            _external=True
+                    )
+                )
         # Iterate through the users to remove.
         for user_id in edit_lesson_form.remove_users.data:
             # Delete the user lesson association for this user/lesson.
@@ -240,6 +261,15 @@ def edit_lesson(lesson_id):
                 ).filter(
                     UserLessonAssociation.user_id == user_id
                 ).first()
+            )
+            # Send an email update.
+            html = 'You have been removed from the lesson on: ' + lesson.get_lesson_date() \
+                + ' this means your attendance is no longer required.'
+
+            # Send a lesson update.
+            send_lesson_update(
+                User.query.filter(User.user_id == user_id).first(), html,
+                url_for('student.lessons', _external=True)
             )
 
         # Commit Changes.
@@ -361,10 +391,21 @@ def record_attendance(lesson_id):
         else:
             abort(500)
 
+        # We only want to send updates if they we're late or not there.
         if assoc.attendance_code == 'L' or assoc.attendance_code == 'N':
             # Send an email update.
-            html = 'Attendance for your lesson on: ' + assoc.lesson.get_lesson_date() + ' has been updated. Your attendance is now recorded as: ' + assoc.get_lesson_attendance_str()
-            send_lesson_update(assoc.user, html, parent=True)
+            html = 'Attendance for your lesson on: ' + assoc.lesson.get_lesson_date() \
+                + ' has been updated. Your attendance is now recorded as: ' + \
+                assoc.get_lesson_attendance_str()
+
+            # Send a lesson update.
+            send_lesson_update(assoc.user, html,
+                url_for('student.view_lesson',
+                        lesson_id=lesson_id,
+                        _external=True
+                ),
+                parent=True
+            )
 
         if check_attendance_complete(lesson):
             # The attendance is complete.

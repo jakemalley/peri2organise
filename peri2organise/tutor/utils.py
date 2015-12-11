@@ -4,6 +4,7 @@
 
 # Flask Imports
 from flask import render_template
+from flask import url_for
 from flask.ext.mail import Message
 # Application Imports
 from peri2organise import mail
@@ -117,7 +118,7 @@ def check_attendance_complete(lesson_obj):
 
     return True
 
-def send_lesson_update(user_obj, update_html, **kwargs):
+def send_lesson_update(user_obj, update_html, view_lesson_link, **kwargs):
     """
     Sends a lesson update to the user/their parent.
     """
@@ -131,7 +132,8 @@ def send_lesson_update(user_obj, update_html, **kwargs):
     # Render the html.
     message.html = render_template(
         'email/update.html',
-        message=update_html
+        message=update_html,
+        view_lesson_link=view_lesson_link
     )
 
     # Send the mail.

@@ -20,3 +20,5 @@ MAIL_PASSWORD='password'
 MAIL_DEFAULT_SENDER='no-reply@fromecollege.org'
 MAX_PASSWORD_TOKEN_AGE=1800
 CONTACT_EMAIL_ADDRESS='contact@fromecollege.org'
+
+UPDATE_ON_NEW_LESSON=True
