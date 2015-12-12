@@ -16,7 +16,7 @@ SPECIALITY = 'Admin'
 # -------------------------- #
 
 # This script can only be run if there are no other admins!
-if User.query.filter(User.role == 'STA').all() is None:
+if not User.query.filter(User.role == 'STA').all():
     # Create a new user object.
     admin_user = User()
     # Create a password hash of the desired password.
