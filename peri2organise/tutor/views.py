@@ -49,7 +49,7 @@ from datetime import timedelta
 tutor_blueprint = Blueprint('tutor', __name__)
 
 @tutor_blueprint.route('/')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def index():
     """
     Index, redirect to dashboard.
@@ -57,7 +57,7 @@ def index():
     return redirect(url_for('tutor.dashboard'))
 
 @tutor_blueprint.route('/dashboard')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def dashboard():
     """
     Tutor dashboard.
@@ -67,7 +67,7 @@ def dashboard():
     )
 
 @tutor_blueprint.route('/lessons')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def lessons():
     """
     View all lessons.
@@ -84,7 +84,7 @@ def lessons():
     )
 
 @tutor_blueprint.route('/lessons/<int:lesson_id>')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def view_lesson(lesson_id):
     """
     View a single lesson.
@@ -104,7 +104,7 @@ def view_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/lessons/add', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def add_lesson():
     """
     Add a new lesson.
@@ -119,7 +119,7 @@ def add_lesson():
         (room.room_id, room.get_location()) for room in Room.query.all()
     ]
     # Select all users.
-    all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
+    all_users = select_users_by_roles(('STU', 'TUT','STA', 'STA'))
     # Update the form choices.
     add_lesson_form.users.choices = [
         (user.user_id, user.get_full_name()) for user in all_users
@@ -183,7 +183,7 @@ def add_lesson():
     )
 
 @tutor_blueprint.route('/lessons/edit/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def edit_lesson(lesson_id):
     """
     Edit a lesson.
@@ -195,7 +195,7 @@ def edit_lesson(lesson_id):
         (room.room_id, room.get_location()) for room in Room.query.all()
     ]
     # Select all users.
-    all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
+    all_users = select_users_by_roles(('STU', 'TUT','STA', 'STA'))
     # Set the choices for the users that can be selected for the new users.
     edit_lesson_form.add_users.choices = [
         (user.user_id, user.get_full_name()) for user in all_users
@@ -311,7 +311,7 @@ def edit_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/students')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def students():
     """
     View all students.
@@ -324,7 +324,7 @@ def students():
     )
 
 @tutor_blueprint.route('/students/<int:student_id>')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def view_student(student_id):
     """
     View a single student.
@@ -341,7 +341,7 @@ def view_student(student_id):
         abort(404)
 
 @tutor_blueprint.route('/parents/<int:parent_id>')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def view_parent(parent_id):
     """
     View a single parent.
@@ -358,7 +358,7 @@ def view_parent(parent_id):
         abort(404)
 
 @tutor_blueprint.route('/attendance', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def attendance():
     """
     Display all lessons attendance can be recorded for.
@@ -384,7 +384,7 @@ def attendance():
     )
 
 @tutor_blueprint.route('/attendance/record/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def record_attendance(lesson_id):
     """
     Record attendance for a lesson.
@@ -449,7 +449,7 @@ def record_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/attendance/view/<int:lesson_id>')
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def view_attendance(lesson_id):
     """
     View attendance for a lesson.
@@ -467,7 +467,7 @@ def view_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/contact', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def contact():
     """
     Contact student or staff member.
@@ -481,7 +481,7 @@ def contact():
     # Select all the staff and tutors.
     contact_form.user.choices = [
         (user.user_id, user.get_full_name()) for user in select_users_by_roles(
-            ('TUT', 'STA', 'STU')
+            ('TUT','STA', 'STA', 'STU')
         )
     ]
 
@@ -513,7 +513,7 @@ def contact():
     )
 
 @tutor_blueprint.route('/contactparent', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def contact_parent():
     """
     Contact parent.
@@ -558,7 +558,7 @@ def contact_parent():
     )
 
 @tutor_blueprint.route('/personaldetails', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def personal_details():
     """
     Edit personal details.
@@ -596,7 +596,7 @@ def personal_details():
     )
 
 @tutor_blueprint.route('/timesheet', methods=['GET', 'POST'])
-@login_required(roles=["TUT"])
+@login_required(roles=['TUT','STA'])
 def timesheet():
     """
     Calculate the total amount of lesson time.

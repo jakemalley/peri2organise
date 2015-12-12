@@ -6,3 +6,7 @@
 <li role="presentation"><a href="{{url_for('tutor.contact')}}">Contact Student</a></li>
 <li role="presentation"><a href="{{url_for('tutor.contact_parent')}}">Contact Parent</a></li>
 <li role="presentation"><a href="{{url_for('tutor.timesheet')}}">Time Sheet</a></li>
+{% if current_user.get_role() == 'STA' %}
+<li class="nav-divider"></li>
+<li role="presentation"><a href="{{url_for('staff.dashboard')}}">Staff Dashboard</a></li>
+{% endif %}
