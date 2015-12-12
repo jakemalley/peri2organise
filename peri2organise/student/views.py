@@ -32,7 +32,7 @@ from datetime import datetime
 student_blueprint = Blueprint('student', __name__)
 
 @student_blueprint.route('/dashboard')
-@login_required(role="STU")
+@login_required(roles=['STU'])
 def dashboard():
     """
     Student Dashboard.
@@ -57,7 +57,7 @@ def dashboard():
     )
 
 @student_blueprint.route('/lessons')
-@login_required(role="STU")
+@login_required(roles=['STU'])
 def lessons():
     """
     All Lessons.
@@ -74,7 +74,7 @@ def lessons():
     )
 
 @student_blueprint.route('/lessons/<int:lesson_id>')
-@login_required(role="STU")
+@login_required(roles=['STU'])
 def view_lesson(lesson_id):
     """
     View a single Lesson.
@@ -94,7 +94,7 @@ def view_lesson(lesson_id):
     )
 
 @student_blueprint.route('/tutors')
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def tutors():
     """
     All Tutors.
@@ -107,7 +107,7 @@ def tutors():
     )
 
 @student_blueprint.route('/tutors/<int:tutor_id>')
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def view_tutor(tutor_id):
     """
     View Tutor.
@@ -120,7 +120,7 @@ def view_tutor(tutor_id):
     )
 
 @student_blueprint.route('/staff')
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def staff():
     """
     All Staff.
@@ -132,7 +132,7 @@ def staff():
         'student/staff.html', staff=all_staff)
 
 @student_blueprint.route('/staff/<int:staff_id>')
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def view_staff(staff_id):
     """
     View Staff Member.
@@ -145,7 +145,7 @@ def view_staff(staff_id):
     )
 
 @student_blueprint.route('/attendance')
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def attendance():
     """
     View Attendance.
@@ -192,7 +192,7 @@ def attendance():
     )
 
 @student_blueprint.route('/personaldetails', methods=['GET', 'POST'])
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def personal_details():
     """
     View and update personal details.
@@ -242,7 +242,7 @@ def personal_details():
     )
 
 @student_blueprint.route('/contact', methods=['GET', 'POST'])
-@login_required(role='STU')
+@login_required(roles=['STU'])
 def contact():
     """
     Contact a member of staff.

@@ -49,7 +49,7 @@ from datetime import timedelta
 tutor_blueprint = Blueprint('tutor', __name__)
 
 @tutor_blueprint.route('/')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def index():
     """
     Index, redirect to dashboard.
@@ -57,7 +57,7 @@ def index():
     return redirect(url_for('tutor.dashboard'))
 
 @tutor_blueprint.route('/dashboard')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def dashboard():
     """
     Tutor dashboard.
@@ -67,7 +67,7 @@ def dashboard():
     )
 
 @tutor_blueprint.route('/lessons')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def lessons():
     """
     View all lessons.
@@ -84,7 +84,7 @@ def lessons():
     )
 
 @tutor_blueprint.route('/lessons/<int:lesson_id>')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def view_lesson(lesson_id):
     """
     View a single lesson.
@@ -104,7 +104,7 @@ def view_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/lessons/add', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def add_lesson():
     """
     Add a new lesson.
@@ -183,7 +183,7 @@ def add_lesson():
     )
 
 @tutor_blueprint.route('/lessons/edit/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def edit_lesson(lesson_id):
     """
     Edit a lesson.
@@ -311,7 +311,7 @@ def edit_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/students')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def students():
     """
     View all students.
@@ -324,7 +324,7 @@ def students():
     )
 
 @tutor_blueprint.route('/students/<int:student_id>')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def view_student(student_id):
     """
     View a single student.
@@ -341,7 +341,7 @@ def view_student(student_id):
         abort(404)
 
 @tutor_blueprint.route('/parents/<int:parent_id>')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def view_parent(parent_id):
     """
     View a single parent.
@@ -358,7 +358,7 @@ def view_parent(parent_id):
         abort(404)
 
 @tutor_blueprint.route('/attendance', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def attendance():
     """
     Display all lessons attendance can be recorded for.
@@ -384,7 +384,7 @@ def attendance():
     )
 
 @tutor_blueprint.route('/attendance/record/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def record_attendance(lesson_id):
     """
     Record attendance for a lesson.
@@ -449,7 +449,7 @@ def record_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/attendance/view/<int:lesson_id>')
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def view_attendance(lesson_id):
     """
     View attendance for a lesson.
@@ -467,7 +467,7 @@ def view_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/contact', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def contact():
     """
     Contact student or staff member.
@@ -513,7 +513,7 @@ def contact():
     )
 
 @tutor_blueprint.route('/contactparent', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def contact_parent():
     """
     Contact parent.
@@ -558,7 +558,7 @@ def contact_parent():
     )
 
 @tutor_blueprint.route('/personaldetails', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def personal_details():
     """
     Edit personal details.
@@ -596,7 +596,7 @@ def personal_details():
     )
 
 @tutor_blueprint.route('/timesheet', methods=['GET', 'POST'])
-@login_required(role="TUT")
+@login_required(roles=["TUT"])
 def timesheet():
     """
     Calculate the total amount of lesson time.

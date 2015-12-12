@@ -45,7 +45,7 @@ def unauthorized_role():
     # Abort with 403 unauthorized error.
     abort(403)
 
-def login_required(role="ANY"):
+def login_required(roles=None):
     """
     Login required decorator, capable of
     handling user roles.
@@ -57,10 +57,13 @@ def login_required(role="ANY"):
             if not current_user.is_authenticated:
                 # The user is not authenticated.
                 return login_manager.unauthorized()
-            user_role = current_user.get_role()
-            if user_role != role and role != "ANY":
-                # The user doesn't have permission to be here.
-                return unauthorized_role()
+            
+            # If roles has been set to a list or tuple.
+            if roles and isinstance(roles, (list, tuple)):
+                # Check that the user's role is in roles.
+                user_role = current_user.get_role()
+                if user_role not in roles:
+                    return unauthorized_role()
 
             return func(*args, **kwargs)
         return decorated_view
