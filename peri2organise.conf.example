@@ -6,7 +6,7 @@ DEVELOPMENT_SERVER_PORT=5000
 # Application Configuration
 SECRET_KEY='a super secret key'
 # Postgres SQL
-SQLALCHEMY_DATABASE_URI='postgresql://peri:pass@postgres/peri2organise'
+SQLALCHEMY_DATABASE_URI='postgresql://peri:password@postgres/peri2organise'
 BRAND='Frome College'
 EMAIL_DOMAIN='fromecollege.org'
 MAIL_SERVER='smtp.host.com'
