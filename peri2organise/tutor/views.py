@@ -91,12 +91,10 @@ def view_lesson(lesson_id):
     """
     # Get the UserLessonAssociation for the current and
     # the given lesson id. (So we can also display attendance etc.)
-    assoc = select_lessons_assoc(current_user, lesson_id=lesson_id)
+    assoc = select_lessons_assoc(current_user, lesson_id=lesson_id, single=True)
 
     # Ensure the lesson id/association object is found.
-    if assoc:
-        assoc = assoc[0]
-    else:
+    if not assoc:
         abort(404)
     # Render the view lesson template and pass in the association and the lesson object.
     return render_template(
@@ -119,7 +117,7 @@ def add_lesson():
         (room.room_id, room.get_location()) for room in Room.query.all()
     ]
     # Select all users.
-    all_users = select_users_by_roles(('STU', 'TUT','STA', 'STA'))
+    all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
     # Update the form choices.
     add_lesson_form.users.choices = [
         (user.user_id, user.get_full_name()) for user in all_users
@@ -195,7 +193,7 @@ def edit_lesson(lesson_id):
         (room.room_id, room.get_location()) for room in Room.query.all()
     ]
     # Select all users.
-    all_users = select_users_by_roles(('STU', 'TUT','STA', 'STA'))
+    all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
     # Set the choices for the users that can be selected for the new users.
     edit_lesson_form.add_users.choices = [
         (user.user_id, user.get_full_name()) for user in all_users
@@ -481,7 +479,7 @@ def contact():
     # Select all the staff and tutors.
     contact_form.user.choices = [
         (user.user_id, user.get_full_name()) for user in select_users_by_roles(
-            ('TUT','STA', 'STA', 'STU')
+            ('TUT', 'STA', 'STU')
         )
     ]
 

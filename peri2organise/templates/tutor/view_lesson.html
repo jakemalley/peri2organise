@@ -61,7 +61,7 @@
         </tr>
         <tr>   
             <th>Attendance</th>
-            <td><a href="#">View attendance for this lesson.</a></td>
+            <td><a href="{{url_for('tutor.view_attendance',lesson_id=lesson.lesson_id)}}">View attendance for this lesson.</a></td>
         </tr>
     </table>
 {% endblock %}

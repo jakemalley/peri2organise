@@ -51,7 +51,7 @@ class UpdatePersonalDetailsForm(Form):
     # Text field for the tutor's email address.
     tutor_email_address = TextField(
         'tutor email address', validators=[
-            DataRequired(), Email(), Length(max=60), is_on_email_domain
+            DataRequired(), Email(), Length(max=60)
         ]
     )
     telephone_number = TextField(

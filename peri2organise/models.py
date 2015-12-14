@@ -164,6 +164,15 @@ class User(db.Model):
         else:
             return 'Unknown'
 
+    def get_telephone_number(self):
+        """
+        Returns the User's telephone number.
+        """
+        if self.telephone_number:
+            return self.telephone_number
+        else:
+            return 'Unknown'
+
     def get_personal_details(self):
         """
         Returns a dictionary of all the user's details.

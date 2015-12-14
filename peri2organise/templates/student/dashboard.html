@@ -95,7 +95,7 @@
                 <td>{{assoc.lesson.get_lesson_date(time_format='%d %b %G')}}</td>
                 <td>{{assoc.lesson.get_lesson_date(time_format='%H:%M')}}</td>
                 <td>{{assoc.attendance_notes}}</td>
-                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
             </tr>
             {% endfor %}
         </tbody>

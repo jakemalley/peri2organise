@@ -57,7 +57,7 @@
                 <td>{{assoc.user.user_id}}</td>
                 <td>{{assoc.user.get_full_name()}}</td>
                 <td>{{assoc.user.get_tutor_group()}}</td>
-                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attenance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
+                <td>{% if assoc.attendance_code == 'A' %}Present{% elif assoc.attendance_code == 'P' %}Planned Absence{% elif assoc.attendance_code == 'L' %}Late{% elif assoc.attendance_code=='N' %}Absent, No Reason Provided.{% else %}Not Recorded{% endif %}</td>
                 <td>
                     <form class="form-inline" role="form" method="post" action="">
                         {{ record_single_attendance_form.csrf_token }}
