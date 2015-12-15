@@ -85,7 +85,7 @@ def timed_safe_url_dump(data, salt='peri2organise'):
         raise Exception('A Secret Key is required to generate tokens.')
     else:
         # Ensure key is a string.
-        if secret_key is None or isinstance(secret_key, str):
+        if secret_key is None or not isinstance(secret_key, str):
             raise Exception('A Secret Key is required to generate tokens.')
 
     # Create URL safe timed serializer.
@@ -108,7 +108,7 @@ def timed_safe_url_load(serialized_data, max_age_in_seconds, salt='peri2organise
         raise Exception('A Secret Key is required to generate tokens.')
     else:
         # Ensure key is a string.
-        if secret_key is None or isinstance(secret_key, str):
+        if secret_key is None or not isinstance(secret_key, str):
             raise Exception('A Secret Key is required to generate tokens.')
 
     # Create URL safe timed serializer.
