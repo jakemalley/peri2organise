@@ -156,4 +156,27 @@ class ResetPasswordForm(Form):
             EqualTo('password', message='Passwords must match.'),
             DataRequired(), Length(min=4, max=32)
         ]
-        )
+    )
+
+class ChangePasswordForm(Form):
+    """
+    Form for users to change their password.
+    """
+
+    # Password field for the user's password.
+    current_password = PasswordField(
+        'current password', validators=[DataRequired(), Length(min=4, max=32)]
+    )
+
+    # Password field for the user's password.
+    new_password = PasswordField(
+        'password', validators=[DataRequired(), Length(min=4, max=32)]
+    )
+    # Password confirm field for the user's password.
+    new_password_confirm = PasswordField(
+        'password confirm',
+        validators=[
+            EqualTo('new_password', message='Passwords must match.'),
+            DataRequired(), Length(min=4, max=32)
+        ]
+    )

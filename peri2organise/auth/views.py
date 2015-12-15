@@ -21,6 +21,7 @@ from peri2organise.auth.forms import LoginForm
 from peri2organise.auth.forms import RegistrationForm
 from peri2organise.auth.forms import GetEmailAddressForm
 from peri2organise.auth.forms import ResetPasswordForm
+from peri2organise.auth.forms import ChangePasswordForm
 from peri2organise.auth.utils import login_required
 from peri2organise.auth.utils import get_current_user_dashboard
 from peri2organise.auth.utils import timed_safe_url_dump
@@ -298,4 +299,45 @@ def reset_password():
     return render_template(
         'auth/resetpassword.html',
         error=error, reset_password_form=reset_password_form
+    )
+
+@auth_blueprint.route('/changepassword', methods=['GET', 'POST'])
+@login_required()
+def change_password():
+    """
+    Change current user's password.
+    """   
+
+    # Set an empty error.
+    error = None
+
+    # Create a reset password form object.
+    change_password_form = ChangePasswordForm()
+
+    # Check the method is POST and the form is valid.
+    if request.method == 'POST' and change_password_form.validate_on_submit():
+
+        # Check to ensure the current password is correct.
+        if not current_user.check_password_hash(change_password_form.current_password.data):
+            # Incorrect password.
+            error = "The current password you entered is incorrect."
+        else:
+            # Reset their password.
+            password_hash = current_user.create_password_hash(
+                change_password_form.new_password.data
+            )
+            # Update their details.
+            current_user.update_user_details(
+                password=password_hash
+            )
+            # Commit changes
+            db.session.commit()
+            # Flash Success message.
+            flash("Successfully changed password.")
+            # Redirect home.
+            return redirect(url_for('home.index'))
+
+    return render_template(
+        'auth/change_password.html',
+        error=error, change_password_form=change_password_form
     )
