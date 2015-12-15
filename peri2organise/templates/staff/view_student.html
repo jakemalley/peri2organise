@@ -1,0 +1,64 @@
+{% extends '__layout__.html' %}
+{% block title %}View Student{% endblock %}
+{% block navbar %}
+    {% include 'staff/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('staff.dashboard')}}">Staff Dashboard</a></li>
+    <li><a href="{{url_for('staff.students')}}">Students</a></li>
+    <li class="active">View Student</li>
+{% endblock %}
+{% block pills %}
+    {% include 'staff/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Staff <small>view students</small></h1>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <td>{{student.user_id}}</td>
+        </tr>
+        <tr>
+            <th>First Name</th>
+            <td>{{student.get_first_name()}}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{student.get_last_name()}}</td>
+        </tr>
+        <tr>
+            <th>Tutor Group</th>
+            <td>{{student.get_tutor_group()}}</td>
+        </tr>
+        <tr>
+            <th>Musical Instrument Type</th>
+            <td>{{student.get_musical_instrument_type()}}</td>
+        </tr>
+        <tr>
+            <th>Musical Instrument</th>
+            <td>{{student.get_musical_instrument()}}</td>
+        </tr>
+        <tr>
+            <th>Musical Style</th>
+            <td>{{student.get_musical_style()}}</td>
+        </tr>
+        <tr>
+            <th>Musical Grade</th>
+            <td>{{student.get_musical_grade()}}</td>
+        </tr>
+        <tr>
+            <th>Lesson Type</th>
+            <td>{{student.get_lesson_type()}}</td>
+        </tr>
+        <tr>
+            <th>Lesson Pairing</th>
+            <td>{{student.get_lesson_pairing()}}</td>
+        </tr>
+        <tr>
+            <th>Parent</th>
+            <td><a href="{{url_for('staff.view_parent',parent_id=student.parent.parent_id)}}">{{student.parent.get_full_name()}}</a></td>
+        </tr>
+    </table>
+{% endblock %}

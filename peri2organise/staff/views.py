@@ -22,9 +22,6 @@ from peri2organise.models import Room
 from peri2organise.models import User
 from peri2organise.models import UserLessonAssociation
 from peri2organise.auth.utils import login_required
-from peri2organise.student.utils import select_future_lessons
-from peri2organise.student.utils import select_past_lessons
-from peri2organise.student.utils import select_lessons_assoc
 from peri2organise.student.utils import select_user
 from peri2organise.student.utils import select_users_by_roles
 from peri2organise.student.forms import ContactForm
@@ -33,14 +30,11 @@ from peri2organise.tutor.forms import EditLessonForm
 from peri2organise.tutor.forms import SelectMinMaxDateForm
 from peri2organise.tutor.forms import RecordSingleAttendanceForm
 from peri2organise.tutor.forms import UpdatePersonalDetailsForm
-from peri2organise.tutor.utils import generate_timesheet
-from peri2organise.tutor.utils import total_time
-from peri2organise.tutor.utils import select_students
 from peri2organise.tutor.utils import select_parents
-from peri2organise.tutor.utils import select_lessons
 from peri2organise.tutor.utils import check_attendance_complete
 from peri2organise.tutor.utils import send_lesson_update
 from peri2organise.staff.forms import FilterLessonsForm
+from peri2organise.staff.forms import AddUserForm
 # Imports
 from datetime import datetime
 from datetime import time
@@ -76,17 +70,24 @@ def lessons():
 
     # If the method was post and the form was valid.
     if request.method == 'POST' and filter_lessons_form.validate_on_submit():
-        if filter_lessons_form.include_future_lessons.data and filter_lessons_form.include_past_lessons.data:
+        if filter_lessons_form.include_future_lessons.data and \
+            filter_lessons_form.include_past_lessons.data:
             all_lessons = Lesson.query.order_by(Lesson.lesson_datetime.asc()).all()
         elif filter_lessons_form.include_future_lessons.data:
-            all_lessons = Lesson.query.filter(Lesson.lesson_datetime >= datetime.now()).order_by(Lesson.lesson_datetime.asc()).all()
+            all_lessons = Lesson.query.filter(
+                Lesson.lesson_datetime >= datetime.now()
+            ).order_by(Lesson.lesson_datetime.asc()).all()
         elif filter_lessons_form.include_past_lessons.data:
-            all_lessons = Lesson.query.filter(Lesson.lesson_datetime <= datetime.now()).order_by(Lesson.lesson_datetime.asc()).all()
+            all_lessons = Lesson.query.filter(
+                Lesson.lesson_datetime <= datetime.now()
+            ).order_by(Lesson.lesson_datetime.asc()).all()
         else:
             all_lessons = []
     else:
         # Only select future.
-        all_lessons = Lesson.query.filter(Lesson.lesson_datetime >= datetime.now()).order_by(Lesson.lesson_datetime.asc()).all()
+        all_lessons = Lesson.query.filter(
+            Lesson.lesson_datetime >= datetime.now()
+        ).order_by(Lesson.lesson_datetime.asc()).all()
 
     return render_template(
         'staff/lessons.html', all_lessons=all_lessons, filter_lessons_form=filter_lessons_form
@@ -208,7 +209,7 @@ def edit_lesson(lesson_id):
     edit_lesson_form.remove_users.choices = [
         (user.user_id, user.get_full_name()) for user in lesson.users
     ]
-    
+
     if request.method == 'POST' and edit_lesson_form.validate_on_submit():
         # Create the datetime object.
         lesson_datetime = datetime.combine(
@@ -468,10 +469,10 @@ def record_attendance(lesson_id):
 
     if request.method == 'POST' and record_single_attendance_form.validate_on_submit():
         assoc = UserLessonAssociation.query.filter(
-                UserLessonAssociation.lesson_id == lesson_id
-            ).filter(
-                UserLessonAssociation.user_id == int(record_single_attendance_form.user_id.data)
-            ).first()
+            UserLessonAssociation.lesson_id == lesson_id
+        ).filter(
+            UserLessonAssociation.user_id == int(record_single_attendance_form.user_id.data)
+        ).first()
 
         if assoc:
             assoc.attendance_code = record_single_attendance_form.attendance_code.data
@@ -660,4 +661,110 @@ def personal_details():
         'staff/personaldetails.html',
         update_personal_details_form=update_personal_details_form,
         personal_details=user_details
+    )
+
+@staff_blueprint.route('/users/add', methods=['GET', 'POST'])
+@login_required(roles=['STA'])
+def add_user():
+    """
+    Add a new user to the database.
+    """
+    # Empty error variable.
+    error = None
+    # Create the form object.
+    add_user_form = AddUserForm()
+
+    # Check to see if the method was post and the form was valid.
+    if request.method == 'POST' and add_user_form.validate_on_submit():
+        # Create new user object.
+        new_user = User()
+        # Create password hash
+        password_hash = new_user.create_password_hash(add_user_form.password.data)
+        # Update generic details.
+        new_user.update_user_details(
+            first_name=add_user_form.first_name.data,
+            last_name=add_user_form.last_name.data,
+            email_address=add_user_form.email_address.data,
+            role=add_user_form.role.data,
+            password=password_hash
+        )
+        # Check to see if the user is a student or a tutor/staff.
+        if add_user_form.role.data == 'STU':
+            # Check there isn't already a parent with these details.
+            parent = Parent.query.filter_by(
+                email_address=add_user_form.parent_email_address.data
+            ).first()
+            # If the parent exists.
+            if parent is not None:
+                # Parent already exists, lets use there details.
+                # But check the phone number also matches.
+                if parent.get_telephone_number() != add_user_form.parent_telephone_number.data:
+                    error = "A parent is already associated with this email address, \
+                        but could not be added to this student as the telephone number \
+                        provided did not match. Please either use a different email address \
+                        or the same telephone number as previously used."
+
+                    return render_template(
+                        'staff/add_user.html',
+                        add_user_form=add_user_form,
+                        error=error
+                    )
+
+                else:
+                    # If the telephone number matched, use this parent's ID.
+                    parent_id = parent.parent_id
+            else:
+                # Add new parent.
+                new_parent = Parent()
+                # Update the new parent's details.
+                new_parent.update_parent_details(
+                    first_name=add_user_form.parent_first_name.data,
+                    last_name=add_user_form.parent_last_name.data,
+                    email_address=add_user_form.parent_email_address.data,
+                    telephone_number=add_user_form.parent_telephone_number.data
+                )
+                # Add the new parent to the database.
+                db.session.add(new_parent)
+                # Commit the changes to the database.
+                db.session.commit()
+                # Get the parent_id.
+                parent_id = new_parent.parent_id
+
+            if add_user_form.musical_instrument.data == 'singing':
+                new_user_musical_instrument = 'Voice'
+            else:
+                new_user_musical_instrument = add_user_form.musical_instrument.data
+
+            # Update student specific details.
+            new_user.update_user_details(
+                tutor_group=add_user_form.tutor_group.data,
+                musical_instrument_type=add_user_form.musical_instrument_type.data,
+                musical_instrument=new_user_musical_instrument,
+                musical_style=add_user_form.musical_style.data,
+                musical_grade=int(add_user_form.musical_grade.data),
+                lesson_type=add_user_form.lesson_type.data,
+                lesson_pairing=add_user_form.lesson_pairing.data,
+                parent_id=parent_id
+            )
+        elif add_user_form.role.data == 'TUT' or add_user_form.role.data == 'STA':
+            # Update staff/tutor specific details.
+            new_user.update_user_details(
+                speciality=add_user_form.speciality.data,
+                telephone_number=add_user_form.telephone_number.data
+            )
+
+        # Add the new user.
+        db.session.add(new_user)
+        # Commit the changes.
+        db.session.commit()
+        # Success message.
+        flash("Successfully added new user.")
+
+        # Redirect.
+        return redirect(url_for('staff.add_user'))
+
+    return render_template(
+        'staff/add_user.html',
+        add_user_form=add_user_form,
+        error=error
     )

@@ -1,0 +1,342 @@
+{% extends '__layout__.html' %}
+{% block title %}Add User{% endblock %}
+{% block header %}
+<!-- Chosen CSS Styles -->
+<link href="{{url_for('static', filename='css/chosen.min.css')}}" rel="stylesheet">
+{% endblock %}
+{% block navbar %}
+    {% include 'staff/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('staff.dashboard')}}">Staff Dashboard</a></li>
+    <li class="active">Users</li>
+    <li class="active">Add User</li>
+{% endblock %}
+{% block pills %}
+    {% include 'staff/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Staff <small>add user</small></h1>
+    </div>
+    <form class="form-horizontal" role="form" method="post" action="">
+    {{ add_user_form.csrf_token }}
+
+    <!-- If there is an error display it to the user. -->
+    {% if error %}
+        <p class="alert alert-danger">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            {{ error }}
+        </p>
+    {% endif %}
+
+    <div class="form-group">
+        <label for="first_name" class="col-sm-2 control-label">User's First Name</label>
+        <div class="col-sm-10">
+            {{ add_user_form.first_name(class="form-control",id="first_name") }}
+            {% for error in add_user_form.first_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="last_name" class="col-sm-2 control-label">User's Last Name</label>
+        <div class="col-sm-10">
+            {{ add_user_form.last_name(class="form-control",id="last_name") }}
+            {% for error in add_user_form.last_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="email_address" class="col-sm-2 control-label">User's Email Address</label>
+        <div class="col-sm-10">
+            {{ add_user_form.email_address(class="form-control",id="email_address") }}
+            {% for error in add_user_form.email_address.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="role" class="col-sm-2 control-label">User's Role</label>
+        <div class="col-sm-10">
+            {{ add_user_form.role(class="form-control",id="role") }}
+            {% for error in add_user_form.role.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_password" class="col-sm-2 control-label">User's Password</label>
+        <div class="col-sm-10">
+            {{ add_user_form.password(class="form-control",id="input_password") }}
+            {% for error in add_user_form.password.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_password_confirm" class="col-sm-2 control-label">Confirm Password</label>
+        <div class="col-sm-10">
+            {{ add_user_form.password_confirm(class="form-control",id="input_password_confirm") }}
+            {% for error in add_user_form.password_confirm.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p>Student's details:</p>
+
+    <div class="form-group">
+        <label for="input_student_tutor_group" class="col-sm-2 control-label">Student's Tutor Group</label>
+        <div class="col-sm-10">
+            {{ add_user_form.tutor_group(class="form-control",id="input_student_tutor_group") }}
+            {% for error in add_user_form.tutor_group.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_musical_instrument_type" class="col-sm-2 control-label">Musical Instrument Type</label>
+        <div class="col-sm-10">
+            {{ add_user_form.musical_instrument_type(class="form-control",id="input_musical_instrument_type") }}
+            {% for error in add_user_form.musical_instrument_type.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_musical_instrument" class="col-sm-2 control-label">Musical Instrument</label>
+        <div class="col-sm-10">
+            {{ add_user_form.musical_instrument(class="form-control",id="input_musical_instrument") }}
+            {% for error in add_user_form.musical_instrument.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_musical_style" class="col-sm-2 control-label">Musical Style</label>
+        <div class="col-sm-10">
+            {{ add_user_form.musical_style(class="form-control",id="input_musical_style") }}
+            {% for error in add_user_form.musical_style.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_musical_grade" class="col-sm-2 control-label">Musical Grade</label>
+        <div class="col-sm-10">
+            {{ add_user_form.musical_grade(class="form-control",id="input_musical_grade") }}
+            {% for error in add_user_form.musical_grade.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_lesson_type" class="col-sm-2 control-label">Lesson Type</label>
+        <div class="col-sm-10">
+            {{ add_user_form.lesson_type(class="form-control",id="input_lesson_type") }}
+            {% for error in add_user_form.lesson_type.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_lesson_pairing" class="col-sm-2 control-label">Lesson Pairing</label>
+        <div class="col-sm-10">
+            {{ add_user_form.lesson_pairing(class="form-control",id="input_lesson_pairing") }}
+            {% for error in add_user_form.lesson_pairing.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_parent_first_name" class="col-sm-2 control-label">Parent's First Name</label>
+        <div class="col-sm-10">
+            {{ add_user_form.parent_first_name(class="form-control",id="input_parent_first_name") }}
+            {% for error in add_user_form.parent_first_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_parent_last_name" class="col-sm-2 control-label">Parent's Last Name</label>
+        <div class="col-sm-10">
+            {{ add_user_form.parent_last_name(class="form-control",id="input_parent_last_name") }}
+            {% for error in add_user_form.parent_last_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_parent_email_address" class="col-sm-2 control-label">Parent's Email Address</label>
+        <div class="col-sm-10">
+            {{ add_user_form.parent_email_address(class="form-control",id="input_parent_email_address") }}
+            {% for error in add_user_form.parent_email_address.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_parent_telephone_number" class="col-sm-2 control-label">Parent's Telephone Number</label>
+        <div class="col-sm-10">
+            {{ add_user_form.parent_telephone_number(class="form-control",id="input_parent_telephone_number") }}
+            {% for error in add_user_form.parent_telephone_number.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p>Staff and external tutor's details:</p>
+
+    <div class="form-group">
+        <label for="input_speciality" class="col-sm-2 control-label">Speciality</label>
+        <div class="col-sm-10">
+            {{ add_user_form.speciality(class="form-control",id="input_speciality") }}
+            {% for error in add_user_form.speciality.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_telephone_number" class="col-sm-2 control-label">Telephone Number</label>
+        <div class="col-sm-10">
+            {{ add_user_form.telephone_number(class="form-control",id="input_telephone_number") }}
+            {% for error in add_user_form.telephone_number.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Add User</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+$('#input_speciality').attr('disabled', true)
+$('#input_telephone_number').attr('disabled', true)
+$('#role').on('change', function() {
+    if ($(this).val() == 'STU') {
+        $('#input_student_tutor_group').attr('disabled', false);
+        $('#input_musical_instrument_type').attr('disabled', false);
+        $('#input_musical_instrument').attr('disabled', false);
+        $('#input_musical_style').attr('disabled', false);
+        $('#input_musical_grade').attr('disabled', false);
+        $('#input_lesson_type').attr('disabled', false);
+        $('#input_lesson_pairing').attr('disabled', false);
+        $('#input_parent_first_name').attr('disabled', false);
+        $('#input_parent_last_name').attr('disabled', false);
+        $('#input_parent_telephone_number').attr('disabled', false);
+        $('#input_parent_email_address').attr('disabled', false);
+        $('#input_speciality').attr('disabled', true)
+        $('#input_telephone_number').attr('disabled', true)
+    } else {
+        $('#input_student_tutor_group').attr('disabled', true);
+        $('#input_musical_instrument_type').attr('disabled', true);
+        $('#input_musical_instrument').attr('disabled', true);
+        $('#input_musical_style').attr('disabled', true);
+        $('#input_musical_grade').attr('disabled', true);
+        $('#input_lesson_type').attr('disabled', true);
+        $('#input_lesson_pairing').attr('disabled', true);
+        $('#input_parent_first_name').attr('disabled', true);
+        $('#input_parent_last_name').attr('disabled', true);
+        $('#input_parent_telephone_number').attr('disabled', true);
+        $('#input_parent_email_address').attr('disabled', true);
+        $('#input_speciality').attr('disabled', false)
+        $('#input_telephone_number').attr('disabled', false)
+    }
+});
+$('#input_lesson_pairing').attr('disabled', true)
+$('#input_musical_instrument_type').on('change', function() {
+    if ($(this).val() == 'singing') {
+        $('#input_musical_instrument').attr('disabled', true);
+    } else {
+      $('#input_musical_instrument').attr('disabled', false);
+    }
+});
+$('#input_lesson_type').on('change', function() {
+    if ($(this).val() == 'individual') {
+        $('#input_lesson_pairing').attr('disabled', true);
+    } else {
+      $('#input_lesson_pairing').attr('disabled', false);
+    }
+});
+</script>
+{% endblock %}

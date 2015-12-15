@@ -1,0 +1,16 @@
+{% extends '__layout__.html' %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block navbar %}
+    {% include 'staff/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li class="active">Staff Dashboard</li>
+{% endblock %}
+{% block pills %}
+    {% include 'staff/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Staff <small>dashboard</small></h1>
+    </div>
+{% endblock %}

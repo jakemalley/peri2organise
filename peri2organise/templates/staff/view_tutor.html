@@ -1,0 +1,44 @@
+{% extends '__layout__.html' %}
+{% block title %}View Tutor{% endblock %}
+{% block navbar %}
+    {% include 'staff/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('staff.dashboard')}}">Staff Dashboard</a></li>
+    <li><a href="{{url_for('staff.tutors')}}">Tutors</a></li>
+    <li class="active">View Tutor</li>
+{% endblock %}
+{% block pills %}
+    {% include 'staff/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Staff <small>view tutors</small></h1>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <td>{{tutor.user_id}}</td>
+        </tr>
+        <tr>
+            <th>First Name</th>
+            <td>{{tutor.get_first_name()}}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{tutor.get_last_name()}}</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td>{{tutor.get_email_address()}}</td>
+        </tr>
+        <tr>
+            <th>Telephone Number</th>
+            <td>{{tutor.get_telephone_number()}}</td>
+        </tr>
+        <tr>
+            <th>Speciality</th>
+            <td>{{tutor.get_speciality()}}</td>
+        </tr>
+    </table>
+{% endblock %}

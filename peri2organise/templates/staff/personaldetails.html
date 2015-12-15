@@ -1,0 +1,116 @@
+{% extends '__layout__.html' %}
+{% block title %}Personal Details{% endblock %}
+{% block navbar %}
+    {% include 'staff/navbar.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{{url_for('staff.dashboard')}}">Tutor Dashboard</a></li>
+    <li class="active">Personal Details</li>
+{% endblock %}
+{% block pills %}
+    {% include 'staff/pills.html' %}
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+      <h1>Staff <small>personal details</small></h1>
+    </div>
+    <form class="form-horizontal" role="form" method="post" action="">
+    {{ update_personal_details_form.csrf_token }}
+
+    <div class="form-group">
+        <label for="update_details" class="col-sm-2 control-label">Update Details</label>
+        <div class="col-sm-10">
+            {{update_personal_details_form.update_details(id='update_details')}}
+            {% for error in update_personal_details_form.update_details.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_tutor_first_name" class="col-sm-2 control-label">Tutor's First Name</label>
+        <div class="col-sm-10">
+            {{ update_personal_details_form.tutor_first_name(class="form-control",id="input_tutor_first_name", value=personal_details['first_name']) }}
+            {% for error in update_personal_details_form.tutor_first_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_tutor_last_name" class="col-sm-2 control-label">Tutor's Last Name</label>
+        <div class="col-sm-10">
+            {{ update_personal_details_form.tutor_last_name(class="form-control",id="input_tutor_last_name", value=personal_details['last_name']) }}
+            {% for error in update_personal_details_form.tutor_last_name.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_tutor_email_address" class="col-sm-2 control-label">Tutor's Email Address</label>
+        <div class="col-sm-10">
+            {{ update_personal_details_form.tutor_email_address(class="form-control",id="input_tutor_email_address",value=personal_details['email_address']) }}
+            {% for error in update_personal_details_form.tutor_email_address.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_telephone_number" class="col-sm-2 control-label">Telephone Number</label>
+        <div class="col-sm-10">
+            {{ update_personal_details_form.telephone_number(class="form-control",id="input_telephone_number",value=personal_details['telephone_number']) }}
+            {% for error in update_personal_details_form.telephone_number.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="input_speciality" class="col-sm-2 control-label">Speciality</label>
+        <div class="col-sm-10">
+            {{ update_personal_details_form.speciality(class="form-control",id="input_speciality",value=personal_details['speciality']) }}
+            {% for error in update_personal_details_form.speciality.errors %}
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default" id="submit_button">Update Details</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+$('input:text').attr('disabled', true)
+$('select').attr('disabled', true)
+$('#submit_button').attr('disabled', true)
+$('#update_details').click(function(){
+    $('input:text').attr('disabled', !this.checked)
+    $('select').attr('disabled', !this.checked)
+    $('#submit_button').attr('disabled', !this.checked)
+});
+</script>
+{% endblock %}
