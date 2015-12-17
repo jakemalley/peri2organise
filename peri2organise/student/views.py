@@ -31,6 +31,14 @@ from datetime import datetime
 # Create student blueprint
 student_blueprint = Blueprint('student', __name__)
 
+@student_blueprint.route('/')
+@login_required(roles=['STU'])
+def index():
+    """
+    Index, redirect to dashboard.
+    """
+    return redirect(url_for('student.dashboard'))
+
 @student_blueprint.route('/dashboard')
 @login_required(roles=['STU'])
 def dashboard():
