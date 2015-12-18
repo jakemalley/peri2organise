@@ -62,8 +62,16 @@ def dashboard():
     """
     Tutor dashboard.
     """
+    # Select all of todays lessons.
+    todays_lessons = select_lessons(
+        current_user,
+        min_date=datetime.now().date(),
+        max_date=datetime.now().date()+timedelta(days=1),
+        order_by=Lesson.lesson_datetime.asc()
+    )
+
     return render_template(
-        'tutor/dashboard.html'
+        'tutor/dashboard.html', todays_lessons=todays_lessons
     )
 
 @tutor_blueprint.route('/lessons')

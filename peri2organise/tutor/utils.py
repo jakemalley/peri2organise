@@ -60,6 +60,9 @@ def select_lessons(user_obj, **kwargs):
         base_query = base_query.filter(
             Lesson.lesson_datetime <= kwargs['max_date'] + timedelta(days=1)
         )
+    if 'order_by' in kwargs:
+        # Order by the given value.
+        base_query = base_query.order_by(kwargs['order_by'])
 
     # If single is set, return the first result, otherwise return all.
     if 'single' in kwargs and kwargs['single']:

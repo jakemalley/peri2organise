@@ -57,7 +57,16 @@ def dashboard():
     """
     Staff dashboard.
     """
-    return render_template('staff/dashboard.html')
+    # Select all of the days lessons.
+    todays_lessons = Lesson.query.filter(
+        Lesson.lesson_datetime >= datetime.now().date()
+    ).filter(
+        Lesson.lesson_datetime <= datetime.now().date() + timedelta(days=1)
+    ).order_by(
+        Lesson.lesson_datetime.asc()
+    ).all()
+
+    return render_template('staff/dashboard.html', todays_lessons=todays_lessons)
 
 @staff_blueprint.route('/lessons', methods=['GET', 'POST'])
 @login_required(roles=['STA'])
