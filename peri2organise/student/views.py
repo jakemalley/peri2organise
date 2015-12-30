@@ -54,10 +54,16 @@ def dashboard():
         current_user,
         max_date=now,
         attendance_codes=('A', 'L'),
+        date_order_asc=True,
         limit=5
     )
     # Select all the past lessons, that have not been recorded.
-    unknown_lessons_assoc = select_lessons_assoc(current_user, max_date=now, attendance_code=None)
+    unknown_lessons_assoc = select_lessons_assoc(
+        current_user,
+        max_date=now,
+        attendance_code=None,
+        date_order_asc=True
+    )
     # Render the dashboard template, passing in the lessons selected from the database.
     return render_template(
         'student/dashboard.html', lessons=future_lessons,
@@ -73,6 +79,7 @@ def lessons():
     # Select all the lessons, where the student is the current user, and the lessons
     # are in the future.
     upcoming_lessons = select_future_lessons(current_user)
+    print(upcoming_lessons)
     # Select all previous lessons, where the student is the current user, and the lessons
     # are in the past.
     previous_lessons = select_past_lessons(current_user)
@@ -89,11 +96,9 @@ def view_lesson(lesson_id):
     """
     # Get the UserLessonAssociation for the current and
     # the given lesson id. (So we can also display attendance etc.)
-    assoc = select_lessons_assoc(current_user, lesson_id=lesson_id)
+    assoc = select_lessons_assoc(current_user, lesson_id=lesson_id, single=True)
     # Ensure the assoc exists.
-    if assoc:
-        assoc = assoc[0]
-    else:
+    if not assoc:
         # Abort with 404 error code.
         abort(404)
     # Render the view lesson template and pass in the association and the lesson object.
@@ -122,6 +127,10 @@ def view_tutor(tutor_id):
     """
     # Select the tutor with the given tutor_id.
     tutor = select_user(tutor_id, role='TUT')
+    # Ensure the tutor is found.
+    if not tutor:
+        # Abort with 404 error code.
+        abort(404)
     # Render the template passing in the tutor object.
     return render_template(
         'student/view_tutor.html', tutor=tutor
@@ -147,6 +156,10 @@ def view_staff(staff_id):
     """
     # Select the staff member with the given staff_id.
     staff_member = select_user(staff_id, role='STA')
+    # Ensure the tutor is found.
+    if not staff_member:
+        # Abort with 404 error code.
+        abort(404)
     # Render the template passing in the staff member.
     return render_template(
         'student/view_staff.html', staff_member=staff_member

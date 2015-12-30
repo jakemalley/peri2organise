@@ -93,24 +93,26 @@ class AddUserForm(Form):
     )
     # Text field for lesson pairing.
     lesson_pairing = TextField('lesson_pairing', validators=[Optional(), Length(max=40)])
-    
+
     # Parent Details
     # Text field for the parent's first name.
     parent_first_name = TextField(
-        'parent first name', validators=[DataRequired(), Length(max=20)]
+        'parent first name', validators=[Optional(), Length(max=20)]
     )
     # Text field for the parent's last name.
     parent_last_name = TextField(
-        'parent last name', validators=[DataRequired(), Length(max=20)]
+        'parent last name', validators=[Optional(), Length(max=20)]
     )
     # Text field for the parent's email address.
     parent_email_address = TextField(
-        'parent email address', validators=[DataRequired(), Email(), Length(max=60)]
+        'parent email address', validators=[Optional(), Email(), Length(max=60)]
     )
     # Text field for the parent's telephone number.
     parent_telephone_number = TextField(
         'parent telephone number',
-        validators=[DataRequired(), Length(max=11), only_has_digits]
+        validators=[Optional(), Length(
+            message='Field must be exactly 11 characters.', min=11, max=11
+        ), only_has_digits]
     )
 
     # Tutor/Staff specific
@@ -121,5 +123,41 @@ class AddUserForm(Form):
     # Text field for the parent's telephone number.
     telephone_number = TextField(
         'telephone number',
-        validators=[Optional(), Length(max=11), only_has_digits]
+        validators=[Optional(), Length(
+            message='Field must be exactly 11 characters.', min=11, max=11
+        ), only_has_digits]
     )
+
+    def validate_optional_form_fields(self):
+        """
+        Validates the optional form fields based on the role.
+        """
+        # Set the return flag to true.
+        # Check the user's role.
+        flag = True
+        if self.role.data == 'STU':
+            # Required fields based on student requirements.
+            required_fields = ['tutor_group', 'parent_first_name', 'parent_last_name', 'parent_email_address', 'parent_telephone_number']
+            # Validate the lesson_pairing and musical_instrument fields.
+            if self.musical_instrument_type.data == 'instrument':
+                # The musical instrument field must be valid.
+                if len(self.musical_instrument.data) <= 0:
+                    self.musical_instrument.errors.append('This field is required.')
+                    flag = False
+            if self.lesson_type.data == 'paired':
+                # The lesson pairing cannot be blank.
+                if len(self.lesson_pairing.data) <= 0:
+                    self.lesson_pairing.errors.append('This field is required.')
+                    flag = False
+                    
+        else:
+            # Required fields based on tutor requirements.
+            required_fields = ['speciality', 'telephone_number']
+
+        # Check the required fields are present.
+        for field_name in required_fields:
+            if field_name in self.data and len(self.data[field_name]) <= 0:
+                getattr(self, field_name).errors.append('This field is required.')
+                flag = False
+
+        return flag

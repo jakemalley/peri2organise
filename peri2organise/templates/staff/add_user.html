@@ -290,37 +290,52 @@
 {% endblock %}
 {% block script %}
 <script type='text/javascript'>
+// Define functions for setting up for a tutor/student
+function student_setup(){
+    $('#input_student_tutor_group').attr('disabled', false);
+    $('#input_musical_instrument_type').attr('disabled', false);
+    $('#input_musical_instrument').attr('disabled', false);
+    $('#input_musical_style').attr('disabled', false);
+    $('#input_musical_grade').attr('disabled', false);
+    $('#input_lesson_type').attr('disabled', false);
+    $('#input_lesson_pairing').attr('disabled', false);
+    $('#input_parent_first_name').attr('disabled', false);
+    $('#input_parent_last_name').attr('disabled', false);
+    $('#input_parent_telephone_number').attr('disabled', false);
+    $('#input_parent_email_address').attr('disabled', false);
+    $('#input_speciality').attr('disabled', true)
+    $('#input_telephone_number').attr('disabled', true)
+}
+function tutor_setup(){
+    $('#input_student_tutor_group').attr('disabled', true);
+    $('#input_musical_instrument_type').attr('disabled', true);
+    $('#input_musical_instrument').attr('disabled', true);
+    $('#input_musical_style').attr('disabled', true);
+    $('#input_musical_grade').attr('disabled', true);
+    $('#input_lesson_type').attr('disabled', true);
+    $('#input_lesson_pairing').attr('disabled', true);
+    $('#input_parent_first_name').attr('disabled', true);
+    $('#input_parent_last_name').attr('disabled', true);
+    $('#input_parent_telephone_number').attr('disabled', true);
+    $('#input_parent_email_address').attr('disabled', true);
+    $('#input_speciality').attr('disabled', false)
+    $('#input_telephone_number').attr('disabled', false)
+}
+// Setup the fields when the page loads.
+$( document ).ready(function() {
+    if ($("#role option:selected").val() == 'STU') {
+        student_setup();
+    } else {
+        tutor_setup();
+    }
+});
 $('#input_speciality').attr('disabled', true)
 $('#input_telephone_number').attr('disabled', true)
 $('#role').on('change', function() {
     if ($(this).val() == 'STU') {
-        $('#input_student_tutor_group').attr('disabled', false);
-        $('#input_musical_instrument_type').attr('disabled', false);
-        $('#input_musical_instrument').attr('disabled', false);
-        $('#input_musical_style').attr('disabled', false);
-        $('#input_musical_grade').attr('disabled', false);
-        $('#input_lesson_type').attr('disabled', false);
-        $('#input_lesson_pairing').attr('disabled', false);
-        $('#input_parent_first_name').attr('disabled', false);
-        $('#input_parent_last_name').attr('disabled', false);
-        $('#input_parent_telephone_number').attr('disabled', false);
-        $('#input_parent_email_address').attr('disabled', false);
-        $('#input_speciality').attr('disabled', true)
-        $('#input_telephone_number').attr('disabled', true)
+        student_setup();
     } else {
-        $('#input_student_tutor_group').attr('disabled', true);
-        $('#input_musical_instrument_type').attr('disabled', true);
-        $('#input_musical_instrument').attr('disabled', true);
-        $('#input_musical_style').attr('disabled', true);
-        $('#input_musical_grade').attr('disabled', true);
-        $('#input_lesson_type').attr('disabled', true);
-        $('#input_lesson_pairing').attr('disabled', true);
-        $('#input_parent_first_name').attr('disabled', true);
-        $('#input_parent_last_name').attr('disabled', true);
-        $('#input_parent_telephone_number').attr('disabled', true);
-        $('#input_parent_email_address').attr('disabled', true);
-        $('#input_speciality').attr('disabled', false)
-        $('#input_telephone_number').attr('disabled', false)
+        tutor_setup();
     }
 });
 $('#input_lesson_pairing').attr('disabled', true)

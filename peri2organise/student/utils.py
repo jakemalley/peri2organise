@@ -19,7 +19,7 @@ def select_future_lessons(user_obj):
     # Select all the lesson objects, which belong
     # to the user_obj and have a time > now.
     return Lesson.query.filter(Lesson.users.contains(user_obj)) \
-        .filter(Lesson.lesson_datetime > now).all()
+        .filter(Lesson.lesson_datetime > now).order_by(Lesson.lesson_datetime.asc()).all()
 
 def select_past_lessons(user_obj):
     """
@@ -31,7 +31,7 @@ def select_past_lessons(user_obj):
     # Select all the lesson objects, which belong
     # to the user_obj and have a time < now.
     return Lesson.query.filter(Lesson.users.contains(user_obj)) \
-        .filter(Lesson.lesson_datetime < now).all()
+        .filter(Lesson.lesson_datetime < now).order_by(Lesson.lesson_datetime.desc()).all()
 
 
 def select_lessons_assoc(user_obj, **kwargs):
@@ -40,7 +40,7 @@ def select_lessons_assoc(user_obj, **kwargs):
     UserLessonAssociations, for the given user_obj and attendance_code.
     """
     # Create a base query.
-    base_query = UserLessonAssociation.query.filter(UserLessonAssociation.user == user_obj)
+    base_query = UserLessonAssociation.query.filter(UserLessonAssociation.user == user_obj).join(UserLessonAssociation.lesson)
     # Check if the lesson_id is set.
     if 'lesson_id' in kwargs and kwargs['lesson_id']:
         # Filter for the given lesson_id.
@@ -63,6 +63,9 @@ def select_lessons_assoc(user_obj, **kwargs):
         base_query = base_query.filter(
             UserLessonAssociation.attendance_code == kwargs['attendance_code']
         )
+    # Check if the order was specified.
+    if 'date_order_asc' in kwargs and kwargs['date_order_asc']:
+        base_query = base_query.order_by(Lesson.lesson_datetime.asc())
     # Check if the limit is set.
     if 'limit' in kwargs and kwargs['limit']:
         base_query = base_query.limit(5)

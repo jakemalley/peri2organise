@@ -35,7 +35,7 @@
                         {{tutor.user_id}}</a></td>
                 <td>{{tutor.get_full_name()}}</td>
                 <td>{{tutor.get_speciality()}}</td>
-                <td>Contact Tutor</td>
+                <td><a role="button" class="btn btn-primary" href="{{url_for('student.contact')}}">Contact</a></td>
             </tr>
             {% endfor %}
         </tbody>

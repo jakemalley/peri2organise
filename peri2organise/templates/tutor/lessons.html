@@ -60,6 +60,7 @@
                             <li><a href="{{url_for('tutor.view_lesson',lesson_id=lesson.lesson_id)}}">View Lesson</a></li>
                             <li><a href="{{url_for('tutor.edit_lesson',lesson_id=lesson.lesson_id)}}">Edit Lesson</a></li>
                             <li><a href="{{url_for('tutor.record_attendance',lesson_id=lesson.lesson_id)}}">Register</a></li>
+                            <li><a href="{{url_for('tutor.view_attendance',lesson_id=lesson.lesson_id)}}">View Attendance</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="{{url_for('tutor.add_lesson')}}">Add New Lesson</a></li>
                         </ul>
@@ -123,6 +124,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li><a href="{{url_for('tutor.record_attendance',lesson_id=lesson.lesson_id)}}">Register</a></li>
+                            <li><a href="{{url_for('tutor.view_attendance',lesson_id=lesson.lesson_id)}}">View Attendance</a></li>
                             <li><a href="{{url_for('tutor.view_lesson',lesson_id=lesson.lesson_id)}}">View Lesson</a></li>
                             <li><a href="{{url_for('tutor.edit_lesson',lesson_id=lesson.lesson_id)}}">Edit Lesson</a></li>
                             <li role="separator" class="divider"></li>

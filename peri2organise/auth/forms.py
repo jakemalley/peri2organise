@@ -122,7 +122,9 @@ class RegistrationForm(Form):
     # Text field for the parent's telephone number.
     parent_telephone_number = TextField(
         'parent telephone number',
-        validators=[DataRequired(), Length(max=11), only_has_digits]
+        validators=[DataRequired(), Length(
+            message='Field must be exactly 11 characters.', min=11, max=11
+        ), only_has_digits]
     )
     parent_signature = BooleanField(
         'parent signature',

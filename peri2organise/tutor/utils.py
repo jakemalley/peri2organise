@@ -25,15 +25,20 @@ def generate_timesheet(user_obj, min_date, max_date):
 
 def total_time(lessons):
     """
-    Iterates through a list of lessons and totals the time.
+    Iterates through a list of lessons and totals the time in seconds.
     """
     # Set total to zero.
     total = 0
     # Loop through all the lessons.
     for lesson in lessons:
         total += lesson.lesson_duration
-    # Return the total.
-    return float(total)/3600.0
+    # Put the total into (hours,mins,seconds)
+    # Calculate minutes/seconds.
+    m, s = divmod(total, 60)
+    # Calculate hours/minutes.
+    h, m = divmod(m, 60)
+    # Return an tuple.
+    return (h, m, s)
 
 def select_lessons(user_obj, **kwargs):
     """
@@ -104,10 +109,15 @@ def select_parents(**kwargs):
     base_query = Parent.query
     # If the id present filter by it.
     if 'parent_id' in kwargs and kwargs['parent_id']:
-        base_query.filter(Parent.parent_id == kwargs['parent_id'])
+        base_query = base_query.filter(Parent.parent_id == kwargs['parent_id'])
 
-    # Return all results.
-    return base_query.all()
+    # Check to see if single is set
+    if 'single' in kwargs and kwargs['single']:
+        # Return the first result.
+        return base_query.first()
+    else:
+        # Return all results.
+        return base_query.all()
 
 def check_attendance_complete(lesson_obj):
     """

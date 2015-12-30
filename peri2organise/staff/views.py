@@ -362,11 +362,11 @@ def view_parent(parent_id):
     View a single parent.
     """
     # Select the parent.
-    parent = select_parents(parent_id=parent_id)
+    parent = select_parents(parent_id=parent_id, single=True)
     # Check the parent exists.
     if parent is not None:
         return render_template(
-            'staff/view_parent.html', parent=parent[0]
+            'staff/view_parent.html', parent=parent
         )
     else:
         # If the parent isn't found, return a 404.
@@ -684,7 +684,8 @@ def add_user():
     add_user_form = AddUserForm()
 
     # Check to see if the method was post and the form was valid.
-    if request.method == 'POST' and add_user_form.validate_on_submit():
+    if request.method == 'POST' and add_user_form.validate_on_submit() \
+        and add_user_form.validate_optional_form_fields():
         # Create new user object.
         new_user = User()
         # Create password hash

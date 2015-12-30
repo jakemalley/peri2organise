@@ -74,18 +74,30 @@ class AddLessonForm(Form):
     # Lesson Date.
     lesson_date = DateField('date', format='%Y-%m-%d')
     # Lesson Hour
-    lesson_hour = IntegerField('hour', validators=[InputRequired(), NumberRange(min=0, max=24)])
+    lesson_hour = IntegerField(
+        'hour',
+        validators=[
+            InputRequired(message='The lesson hour is required.'),
+            NumberRange(message='The lesson hour must be between 0 and 23.', min=0, max=23)
+        ]
+    )
     # Lesson Minute
-    lesson_minute = IntegerField('minute', validators=[InputRequired(), NumberRange(min=0, max=60)])
+    lesson_minute = IntegerField(
+        'minute',
+        validators=[
+            InputRequired(message='The lesson minute is required.'),
+            NumberRange(message='The lesson minute must be between 0 and 59.', min=0, max=59)
+        ]
+    )
     # Lesson Duration (Minutes)
-    lesson_duration = IntegerField('duration', validators=[DataRequired(), NumberRange(min=0)])
+    lesson_duration = IntegerField('duration', validators=[InputRequired(), NumberRange(min=1)])
     # Lesson Notes
     lesson_notes = TextAreaField('notes')
     # Lesson Room
     lesson_room_id = SelectField('room', validators=[DataRequired()], coerce=int, choices=[])
     # Users
     users = SelectMultipleField(
-        'users', validators=[DataRequired()], coerce=int, choices=[]
+        'users', validators=[DataRequired(message='At least one user is required.')], coerce=int, choices=[]
     )
 
 class EditLessonForm(Form):
@@ -96,11 +108,23 @@ class EditLessonForm(Form):
     # Lesson Date.
     lesson_date = DateField('date', format='%Y-%m-%d')
     # Lesson Hour
-    lesson_hour = IntegerField('hour', validators=[DataRequired(), NumberRange(min=0, max=24)])
+    lesson_hour = IntegerField(
+        'hour',
+        validators=[
+            InputRequired(message='The lesson hour is required.'),
+            NumberRange(message='The lesson hour must be between 0 and 23.', min=0, max=23)
+        ]
+    )
     # Lesson Minute
-    lesson_minute = IntegerField('minute', validators=[InputRequired(), NumberRange(min=0, max=60)])
+    lesson_minute = IntegerField(
+        'minute',
+        validators=[
+            InputRequired(message='The lesson minute is required.'),
+            NumberRange(message='The lesson minute must be between 0 and 59.', min=0, max=59)
+        ]
+    )
     # Lesson Duration (Minutes)
-    lesson_duration = IntegerField('duration', validators=[DataRequired(), NumberRange(min=0)])
+    lesson_duration = IntegerField('duration', validators=[InputRequired(), NumberRange(min=1)])
     # Lesson Notes
     lesson_notes = TextAreaField('notes')
     # Lesson Room
@@ -117,7 +141,8 @@ class EditLessonForm(Form):
 class RecordSingleAttendanceForm(Form):
 
     # Attendance Code
-    attendance_code = SelectField('attendance code', 
+    attendance_code = SelectField(
+        'attendance code',
         choices=[
             ('0', 'Please Select One'),
             ('A', 'Present'),
@@ -125,7 +150,10 @@ class RecordSingleAttendanceForm(Form):
             ('P', 'Planned Absence'),
             ('N', 'Absent, No Reason Provided.')
         ],
-        validators=[DataRequired(), NoneOf('0')]
+        validators=[
+            DataRequired(),
+            NoneOf('0', message='Attendance must be selected for this student.')
+        ]
     ) 
 
     # Hidden Field for the user id.

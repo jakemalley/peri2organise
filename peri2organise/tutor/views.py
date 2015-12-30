@@ -49,7 +49,7 @@ from datetime import timedelta
 tutor_blueprint = Blueprint('tutor', __name__)
 
 @tutor_blueprint.route('/')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def index():
     """
     Index, redirect to dashboard.
@@ -57,7 +57,7 @@ def index():
     return redirect(url_for('tutor.dashboard'))
 
 @tutor_blueprint.route('/dashboard')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def dashboard():
     """
     Tutor dashboard.
@@ -75,7 +75,7 @@ def dashboard():
     )
 
 @tutor_blueprint.route('/lessons')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def lessons():
     """
     View all lessons.
@@ -92,7 +92,7 @@ def lessons():
     )
 
 @tutor_blueprint.route('/lessons/<int:lesson_id>')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def view_lesson(lesson_id):
     """
     View a single lesson.
@@ -110,7 +110,7 @@ def view_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/lessons/add', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def add_lesson():
     """
     Add a new lesson.
@@ -189,11 +189,19 @@ def add_lesson():
     )
 
 @tutor_blueprint.route('/lessons/edit/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def edit_lesson(lesson_id):
     """
     Edit a lesson.
     """
+    # Find the lesson with the given ID.
+    lesson = select_lessons(current_user, lesson_id=lesson_id, single=True)
+
+    # If the lesson is not found abort.
+    if not lesson:
+        # HTTP not found.
+        abort(404)
+
     # Create a new edit lesson form.
     edit_lesson_form = EditLessonForm()
     # Add the rooms.
@@ -210,9 +218,6 @@ def edit_lesson(lesson_id):
     edit_lesson_form.add_users.choices.remove(
         (current_user.user_id, current_user.get_full_name())
     )
-
-    # Find the lesson with the given ID.
-    lesson = select_lessons(current_user, lesson_id=lesson_id, single=True)
 
     # All the users that can be removed are the users of the lesson.
     edit_lesson_form.remove_users.choices = [
@@ -317,7 +322,7 @@ def edit_lesson(lesson_id):
     )
 
 @tutor_blueprint.route('/students')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def students():
     """
     View all students.
@@ -330,7 +335,7 @@ def students():
     )
 
 @tutor_blueprint.route('/students/<int:student_id>')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def view_student(student_id):
     """
     View a single student.
@@ -347,24 +352,24 @@ def view_student(student_id):
         abort(404)
 
 @tutor_blueprint.route('/parents/<int:parent_id>')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def view_parent(parent_id):
     """
     View a single parent.
     """
     # Select the parent.
-    parent = select_parents(parent_id=parent_id)
+    parent = select_parents(parent_id=parent_id, single=True)
     # Check the parent exists.
     if parent is not None:
         return render_template(
-            'tutor/view_parent.html', parent=parent[0]
+            'tutor/view_parent.html', parent=parent
         )
     else:
         # If the parent isn't found, return a 404.
         abort(404)
 
 @tutor_blueprint.route('/attendance', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def attendance():
     """
     Display all lessons attendance can be recorded for.
@@ -376,11 +381,15 @@ def attendance():
         # Form was submitted and is valid, filter by dates.
         no_attendance_recorded = select_lessons(
             current_user, attendance_recorded=False,
-            min_date=select_date_form.min_date.data, max_date=select_date_form.max_date.data
+            min_date=select_date_form.min_date.data, max_date=select_date_form.max_date.data,
+            order_by=Lesson.lesson_datetime.asc()
         )
     else:
         # Select all lessons with recorded attendance.
-        no_attendance_recorded = select_lessons(current_user, attendance_recorded=False)
+        no_attendance_recorded = select_lessons(
+            current_user, attendance_recorded=False,
+            order_by=Lesson.lesson_datetime.asc()
+        )
 
     # Render the attendance template.
     return render_template(
@@ -390,7 +399,7 @@ def attendance():
     )
 
 @tutor_blueprint.route('/attendance/record/<int:lesson_id>', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def record_attendance(lesson_id):
     """
     Record attendance for a lesson.
@@ -455,7 +464,7 @@ def record_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/attendance/view/<int:lesson_id>')
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def view_attendance(lesson_id):
     """
     View attendance for a lesson.
@@ -473,7 +482,7 @@ def view_attendance(lesson_id):
     )
 
 @tutor_blueprint.route('/contact', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def contact():
     """
     Contact student or staff member.
@@ -519,7 +528,7 @@ def contact():
     )
 
 @tutor_blueprint.route('/contactparent', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def contact_parent():
     """
     Contact parent.
@@ -564,7 +573,7 @@ def contact_parent():
     )
 
 @tutor_blueprint.route('/personaldetails', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def personal_details():
     """
     Edit personal details.
@@ -602,7 +611,7 @@ def personal_details():
     )
 
 @tutor_blueprint.route('/timesheet', methods=['GET', 'POST'])
-@login_required(roles=['TUT','STA'])
+@login_required(roles=['TUT', 'STA'])
 def timesheet():
     """
     Calculate the total amount of lesson time.
@@ -610,7 +619,7 @@ def timesheet():
     # Create new form objects for minimum and maximum dates.
     select_date_form = SelectMinMaxDateForm()
     # Set lessons and hours worked to None.
-    time_sheet_lessons = hours_worked = None
+    time_sheet_lessons = time_sheet_time = None
 
     if request.method == 'POST' and select_date_form.validate_on_submit():
         # Set the min and max dates to the dates on the form.
@@ -618,8 +627,8 @@ def timesheet():
         max_date = select_date_form.max_date.data
     else:
         # This month.
-        min_date = datetime.now()
-        max_date = datetime.now() + timedelta(days=30)
+        min_date = datetime.now() - timedelta(days=30)
+        max_date = datetime.now()
         # Set the form defaults to these dates.
         select_date_form.min_date.default = min_date
         select_date_form.max_date.default = max_date
@@ -631,11 +640,11 @@ def timesheet():
         current_user, min_date, max_date
     )
 
-    # Total the hours worked.
-    hours_worked = total_time(time_sheet_lessons)
+    # Total the seconds worked.
+    time_sheet_time = total_time(time_sheet_lessons)
 
     # Return the template with the data.
     return render_template(
         'tutor/timesheet.html', time_sheet_lessons=time_sheet_lessons,
-        hours_worked=hours_worked, select_date_form=select_date_form
+        time_sheet_time=time_sheet_time, select_date_form=select_date_form
     )

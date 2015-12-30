@@ -45,7 +45,7 @@
             <td>{{lesson.room.get_location()}}</td>
         </tr>
         <tr>
-            <th>Others Attending</th>
+            <th>Users</th>
             <td>
                 {% for user in lesson.users %}
                     {%if user.get_role()=='STU' %}

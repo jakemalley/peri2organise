@@ -149,7 +149,7 @@ def register():
         password_hash = new_user.create_password_hash(registration_form.password.data)
 
         # If the user selected a musical instrument type of singing set instrument to voice.
-        if registration_form.musical_instrument.data == 'singing':
+        if registration_form.musical_instrument_type.data == 'singing':
             new_user_musical_instrument = 'Voice'
         else:
             new_user_musical_instrument = registration_form.musical_instrument.data
@@ -236,7 +236,7 @@ def forgot_password():
             # Redirect to the homepage.
             return redirect(url_for('home.index'))
         else:
-            error = 'Invalid E-Mail address.'
+            error = 'A user could not be found with that email address.'
             flash(error, 'error')
 
     return render_template(
