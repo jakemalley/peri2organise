@@ -319,7 +319,7 @@ def students():
     View all students.
     """
     # Select the students.
-    all_students = User.query.filter(User.role == 'STU').all()
+    all_students = User.query.filter(User.role == 'STU').order_by(User.last_name).all()
     # Render the students template.
     return render_template(
         'staff/students.html', students=all_students
@@ -349,7 +349,7 @@ def parents():
     View all parents.
     """
     # Select all parents.
-    all_parents = Parent.query.all()
+    all_parents = Parent.query.order_by(Parent.last_name).all()
     # Render the parents template.
     return render_template(
         'staff/parents.html', parents=all_parents
@@ -379,7 +379,7 @@ def tutors():
     View all tutors.
     """
     # Select all tutors.
-    all_tutors = User.query.filter(User.role == 'TUT').all()
+    all_tutors = User.query.filter(User.role == 'TUT').order_by(User.last_name).all()
     # Render the tutors template.
     return render_template(
         'staff/tutors.html', tutors=all_tutors
@@ -409,7 +409,7 @@ def staff():
     View all staff.
     """
     # Select all staff.
-    all_staff = User.query.filter(User.role == 'STA').all()
+    all_staff = User.query.filter(User.role == 'STA').order_by(User.last_name).all()
     # Render the staff template.
     return render_template(
         'staff/staff.html', staff=all_staff
