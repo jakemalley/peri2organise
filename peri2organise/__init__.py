@@ -15,7 +15,6 @@ from peri2organise.proxy import ReverseProxied
 
 # Create application object.
 app = Flask(__name__)
-app.wsgi_app = ReverseProxied(app.wsgi_app)
 # Load the configuration.
 load_application_configuration(app)
 
