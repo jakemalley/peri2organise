@@ -79,7 +79,6 @@ def lessons():
     # Select all the lessons, where the student is the current user, and the lessons
     # are in the future.
     upcoming_lessons = select_future_lessons(current_user)
-    print(upcoming_lessons)
     # Select all previous lessons, where the student is the current user, and the lessons
     # are in the past.
     previous_lessons = select_past_lessons(current_user)
@@ -254,12 +253,12 @@ def personal_details():
     update_personal_details_form.musical_grade.default = \
         user_personal_details['musical_grade']
     # Update the form to reflect changes.
-    update_personal_details_form.process()
+    user_details.process()
 
     return render_template(
         'student/personaldetails.html',
         update_personal_details_form=update_personal_details_form,
-        personal_details=user_personal_details
+        personal_details=user_details
     )
 
 @student_blueprint.route('/contact', methods=['GET', 'POST'])

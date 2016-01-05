@@ -11,9 +11,11 @@ from flask.ext.bcrypt import Bcrypt
 from flask.ext.mail import Mail
 # Application Imports
 from peri2organise.utils import load_application_configuration
+from peri2organise.proxy import ReverseProxied
 
 # Create application object.
 app = Flask(__name__)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 # Load the configuration.
 load_application_configuration(app)
 
