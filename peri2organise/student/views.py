@@ -244,16 +244,16 @@ def personal_details():
             return redirect(url_for('student.personal_details'))
 
     # Create a dictionary of the required personal details.
-    user_personal_details = current_user.get_personal_details()
+    user_details = current_user.get_personal_details()
     # Change the defaults in the form - for select boxes only!
     update_personal_details_form.musical_instrument_type.default = \
-        user_personal_details['musical_instrument_type']
+        user_details['musical_instrument_type']
     update_personal_details_form.musical_style.default = \
-        user_personal_details['musical_style']
+        user_details['musical_style']
     update_personal_details_form.musical_grade.default = \
-        user_personal_details['musical_grade']
+        user_details['musical_grade']
     # Update the form to reflect changes.
-    user_details.process()
+    update_personal_details_form.process()
 
     return render_template(
         'student/personaldetails.html',
