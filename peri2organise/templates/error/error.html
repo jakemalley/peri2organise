@@ -14,6 +14,8 @@
   </div>
   <div class="panel-body">
     {{error}}
+    <br/><br/>
+    <a class="btn btn-primary" role="button" href="{{redirect_back}}">Go Back</a>
   </div>
 </div>
 <p>If you think this is a serious error - you can report it: <a href="mailto:{{config['CONTACT_EMAIL_ADDRESS']}}?Subject=Music%20Application%20-%20Site%20Error%20({{error}})">{{config['CONTACT_EMAIL_ADDRESS']}}</a></p>
