@@ -631,7 +631,7 @@ def contact_parent():
             return redirect(url_for('staff.dashboard'))
 
     return render_template(
-        'tutor/contactparent.html', contact_form=contact_form, error=error
+        'staff/contactparent.html', contact_form=contact_form, error=error
     )
 
 @staff_blueprint.route('/personaldetails', methods=['GET', 'POST'])
