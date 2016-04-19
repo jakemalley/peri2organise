@@ -1,5 +1,9 @@
 {% extends '__layout__.html' %}
 {% block title %}Contact User{% endblock %}
+{% block header %}
+<!-- Chosen CSS Styles -->
+<link href="{{url_for('static', filename='css/chosen.min.css')}}" rel="stylesheet">
+{% endblock %}
 {% block navbar %}
     {% include 'staff/navbar.html' %}
 {% endblock %}
@@ -28,7 +32,7 @@
         <div class="form-group">
             <label for="user" class="col-sm-2 control-label">User</label>
             <div class="col-sm-10">
-                {{ contact_form.user(class="form-control",id="user") }}
+                {{ contact_form.user(class="form-control chosen-select",id="user") }}
                 {% for error in contact_form.user.errors %}
                 <p>
                     <span class="glyphicon glyphicon-exclamation-sign" style="color:#bb321f;" aria-hidden="true"></span>
@@ -71,4 +75,12 @@
             </div>
         </div>
     </form>
+{% endblock %}
+{% block script %}
+<!-- Include chosen.js -->
+<script src="{{url_for('static', filename='js/chosen.jquery.js')}}" type="text/javascript"></script>
+<!-- chosen.js config -->
+<script type="text/javascript">
+    $('.chosen-select').chosen();
+</script>
 {% endblock %}

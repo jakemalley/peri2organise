@@ -70,11 +70,19 @@ class User(db.Model):
         """
         return self.user_id
 
-    def get_role(self):
+    def get_role(self, pretty=False):
         """
         Returns the User's role.
         """
-        return self.role.upper()
+        if pretty:
+            if self.role.upper() == 'STU':
+                return 'Student'
+            elif self.role.upper() == 'TUT':
+                return 'Tutor'
+            elif self.role.upper() == 'STA':
+                return 'Staff Member'
+        else:    
+            return self.role.upper()
 
     def update_user_details(self, **kwargs):
         """

@@ -139,7 +139,7 @@ def add_lesson():
     all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
     # Update the form choices.
     add_lesson_form.users.choices = [
-        (user.user_id, user.get_full_name()) for user in all_users
+        (user.user_id, user.get_full_name() + " (" + user.get_role(pretty=True) + ")") for user in all_users
     ]
 
     if request.method == 'POST' and add_lesson_form.validate_on_submit():
@@ -208,7 +208,7 @@ def edit_lesson(lesson_id):
     all_users = select_users_by_roles(('STU', 'TUT', 'STA'))
     # Set the choices for the users that can be selected for the new users.
     edit_lesson_form.add_users.choices = [
-        (user.user_id, user.get_full_name()) for user in all_users
+        (user.user_id, user.get_full_name() + " (" + user.get_role(pretty=True) + ")") for user in all_users
     ]
 
     # Find the lesson with the given ID.
@@ -216,7 +216,7 @@ def edit_lesson(lesson_id):
 
     # All the users that can be removed are the users of the lesson.
     edit_lesson_form.remove_users.choices = [
-        (user.user_id, user.get_full_name()) for user in lesson.users
+        (user.user_id, user.get_full_name() + " (" + user.get_role(pretty=True) + ")") for user in lesson.users
     ]
 
     if request.method == 'POST' and edit_lesson_form.validate_on_submit():
@@ -557,7 +557,7 @@ def contact():
 
     # Select all the staff and tutors.
     contact_form.user.choices = [
-        (user.user_id, user.get_full_name()) for user in select_users_by_roles(
+        (user.user_id, user.get_full_name() + " (" + user.get_role(pretty=True) + ")") for user in select_users_by_roles(
             ('TUT', 'STA', 'STU')
         )
     ]
