@@ -1,7 +1,7 @@
 peri2organise
 =============
 
-A organisation and management tool for school music departments.
+A organisation and management tool for Frome College music department.
 
 peri2organise aims to make organising and managing extracurricular 
 peripatetic music lessons easier by providing tools to easily create 
