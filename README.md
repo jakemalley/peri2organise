@@ -18,24 +18,36 @@ Installation
 
 ## Development
 Download the source code.
-```git clone https://github.com/jakemalley/peri2organise```
-```cd peri2organise```
+```
+git clone https://github.com/jakemalley/peri2organise
+cd peri2organise
+```
 Install virtualenv and create a new environment.
-```pip install virtualenv```
-```virtualenv env```
-```source env/bin/activate```
+```
+pip install virtualenv
+virtualenv env
+source env/bin/activate
+```
 Install the requirements.
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 Run the development server.
-```python manage.py runserver```
+```
+python manage.py runserver
+```
 
 ## Production
 These installation instructions have been written for CentOS 7.
 
 Install the EPEL release.
-```sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm```
+```
+sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+```
 Run YUM update.
-```sudo yum update```
+```
+sudo yum update
+```
 Add the YUM repository.
 ```
 sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
@@ -48,22 +60,32 @@ gpgkey=https://yum.dockerproject.org/gpg
 EOF
 ```
 Install docker-engine, python-pip and git.
-```sudo yum install docker-engine python-pip git```
+```
+sudo yum install docker-engine python-pip git
+```
 Start and enable docker.
 ```
 sudo systemctl start docker
 sudo systemctl enable docker
 ```
 Install docker-compose.
-```sudo pip install docker-compose```
+```
+sudo pip install docker-compose
+```
 Download the source code.
-```git clone https://github.com/jakemalley/peri2organise```
-```cd peri2organise```
+```
+git clone https://github.com/jakemalley/peri2organise
+cd peri2organise
+```
 
 Optional: Set the postgres database password.
-```cd docker/```
+```
+cd docker/
+```
 Edit the docker-compose.yml file, edit the password on line 37.
-```vim docker-compose.yml```
+```
+vim docker-compose.yml
+```
 Create a configuration. The SMTP server settings will need to be changed, along with a few other options.
 ```
 cd ../
